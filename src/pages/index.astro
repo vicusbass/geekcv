@@ -189,11 +189,30 @@ const jsonLd = [
   .home-ascii {
     color: var(--term-accent);
     text-shadow: 0 0 12px rgba(var(--term-accent-rgb), 0.4);
-    font-size: clamp(7px, 1.55vw + 1px, 10.5px);
+    font-size: 10.5px;
     line-height: 1.1;
     margin: 0;
     font-weight: 500;
     overflow: hidden;
+    white-space: pre;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+  @media (max-width: 720px) {
+    .home-ascii {
+      font-size: 9px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+  }
+  @media (max-width: 560px) {
+    .home-ascii { font-size: 8px; }
+  }
+  @media (max-width: 460px) {
+    .home-ascii { font-size: 7px; }
+  }
+  @media (max-width: 380px) {
+    .home-ascii { font-size: 6px; }
   }
   .home-build {
     margin-top: 16px;
