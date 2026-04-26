@@ -221,6 +221,7 @@ a {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.term-h h1,
 .term-h h2 {
   font-family: var(--term-display);
   font-size: 38px;
@@ -230,6 +231,7 @@ a {
   font-weight: 500;
   letter-spacing: -0.02em;
 }
+.term-h h1 em,
 .term-h h2 em {
   font-style: normal;
   color: var(--term-accent);

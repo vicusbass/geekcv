@@ -27,10 +27,14 @@ const total = projects.length;
 const totalPad = total.toString().padStart(2, '0');
 ---
 
-<Terminal title="vicusbass · ~/work" active="work">
+<Terminal
+  title="Projects — Web Development & Test Automation by Vasile Pop"
+  description="Selected projects by Vasile Pop — production websites in Astro, Next.js and Sanity, plus open-source test automation in Python and TypeScript. Built for clinics, agencies and SaaS teams."
+  active="work"
+>
   <div class="term-h" style="padding:40px 24px 16px">
     <span class="lead">02 //</span>
-    <h2>~/<em>work</em>.idx</h2>
+    <h1>~/<em>work</em>.idx</h1>
     <span class="right">{total} entries · j/k or click</span>
   </div>
 
@@ -95,7 +99,7 @@ const totalPad = total.toString().padStart(2, '0');
               <p>{p.data.blurb}</p>
               <div class="cta">
                 <a class="btn btn-prim" href={p.data.url} target="_blank" rel="noreferrer">$ open ↗</a>
-                <a class="btn" href={p.data.url} target="_blank" rel="noreferrer">$ inspect</a>
+                <a class="btn" href={`/projects/${p.id}/`}>$ cat {p.id}.md</a>
               </div>
             </div>
             <div class="view-meta">

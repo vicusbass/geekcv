@@ -1,0 +1,147 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Terminal from '../../layouts/Terminal.astro';
+import { getAsset } from '../../lib/assets';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+
+const src = getAsset(project.data.shot);
+const shot = src
+  ? await getImage({ src, width: 1200, format: 'webp', quality: 85 })
+  : null;
+const ogShot = src
+  ? await getImage({ src, width: 1200, height: 630, format: 'png', quality: 85, fit: 'inside' })
+  : null;
+
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+const url = `${SITE}/projects/${project.id}/`;
+
+const description = `${project.data.blurb} Built by Vasile Pop · ${project.data.kind} · ${project.data.year} · ${project.data.stack.join(', ')}.`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.blurb,
+  dateCreated: project.data.year,
+  url: project.data.url,
+  creator: {
+    '@type': 'Person',
+    name: 'Vasile Pop',
+    url: SITE,
+  },
+  about: project.data.kind,
+  keywords: project.data.stack.join(', '),
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': url,
+  },
+};
+---
+
+<Terminal
+  title={`${project.data.title} — ${project.data.kind}`}
+  description={description}
+  active="work"
+  ogImage={ogShot?.src}
+  jsonLd={jsonLd}
+>
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">/projects //</span>
+    <h1>~/<em>{project.id}</em></h1>
+    <span class="right"><a href="/projects">$ ls /work</a></span>
+  </div>
+
+  <section class="work-single page-enter">
+    <div class="view-hd">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="url">$ curl -L {project.data.url}</span>
+      <span class="live">200 OK</span>
+    </div>
+
+    <div class="shot">
+      {shot ? (
+        <img
+          src={shot.src}
+          alt={`Screenshot of ${project.data.title} — ${project.data.kind}`}
+          width={shot.attributes.width}
+          height={shot.attributes.height}
+          loading="eager"
+        />
+      ) : (
+        <div class="shot-fb">
+          <pre>{project.data.asciiFallback ?? project.data.title}</pre>
+        </div>
+      )}
+      <div class="shot-overlay"></div>
+    </div>
+
+    <div class="view-bd">
+      <div>
+        <div class="lead">{project.data.kind} · {project.data.year}</div>
+        <h2>{project.data.title}</h2>
+        <p>{project.data.blurb}</p>
+        <div class="cta">
+          <a class="btn btn-prim" href={project.data.url} target="_blank" rel="noreferrer">
+            $ open ↗
+          </a>
+          <a class="btn" href="/projects">$ ls /work</a>
+          <a class="btn" href="/contact">$ mail vasile</a>
+        </div>
+      </div>
+      <div class="view-meta">
+        <div class="line"><span class="k">role</span><span class="v">{project.data.role}</span></div>
+        <div class="line"><span class="k">year</span><span class="v">{project.data.year}</span></div>
+        <div class="line"><span class="k">kind</span><span class="v">{project.data.kind}</span></div>
+        <div class="line">
+          <span class="k">stack</span>
+          <div class="stack">{project.data.stack.map((s) => <span>{s}</span>)}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Terminal>
+
+<style>
+  .term-h h1 {
+    font-family: var(--term-display);
+    font-size: 38px;
+    line-height: 1;
+    margin: 0;
+    color: var(--term-fg);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .term-h h1 em {
+    font-style: normal;
+    color: var(--term-accent);
+    text-shadow: 0 0 12px rgba(var(--term-accent-rgb), 0.35);
+  }
+  .term-h .right a {
+    color: var(--term-dim);
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+  }
+  .work-single {
+    margin: 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .work-single .view-bd h2 {
+    font-family: var(--term-display);
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    color: var(--term-fg);
+    margin: 0 0 6px;
+    font-weight: 500;
+  }
+</style>

@@ -6,10 +6,40 @@ import TermFoot from '../components/TermFoot.astro';
 
 interface Props {
   title: string;
+  description?: string;
   active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+  ogImage?: string | null;
+  ogType?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  canonical?: string;
+  publishedTime?: string;
+  tags?: string[];
 }
 
-const { title, active } = Astro.props;
+const {
+  title,
+  description = 'Vasile Pop — SDET & web development consultant. 21+ years of test automation, Playwright, pytest, k6 and shipping web apps in TypeScript and Python. Cluj-Napoca, remote.',
+  active,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  jsonLd,
+  canonical: canonicalProp,
+  publishedTime,
+  tags,
+} = Astro.props;
+
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+const canonical = canonicalProp ?? new URL(Astro.url.pathname, SITE).toString();
+const ogImageAbs = ogImage
+  ? ogImage.startsWith('http')
+    ? ogImage
+    : `${SITE}${ogImage}`
+  : null;
+const fullTitle = title.includes('Vasile Pop') || title.includes('vicusbass')
+  ? title
+  : `${title} · vicusbass`;
 ---
 
 <!doctype html>
@@ -17,13 +47,48 @@ const { title, active } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{title}</title>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta name="author" content="Vasile Pop" />
+    <meta name="theme-color" content="#06080a" />
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    {ogImageAbs && <meta property="og:image" content={ogImageAbs} />}
+    <meta property="og:site_name" content="vicusbass" />
+    <meta property="og:locale" content="en_US" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {tags?.map((t) => <meta property="article:tag" content={t} />)}
+
+    <meta name="twitter:card" content={ogImageAbs ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {ogImageAbs && <meta name="twitter:image" content={ogImageAbs} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+
+    {jsonLd && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
   </head>
   <body>
     <CRTLayers />

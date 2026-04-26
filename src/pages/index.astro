@@ -32,12 +32,65 @@ const stats: Array<[string, string]> = [
   ['SHELL', '/bin/vasile · zsh 5.9'],
   ['SDET', 'pytest · playwright · k6 · everything'],
   ['DEV', 'astro · next · ts · python'],
-  ['STATUS', '● open for side projects'],
+  ['STATUS', '● open for consulting'],
   ['SIDE', 'bass guitar · guitars'],
+];
+
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Vasile Pop',
+    alternateName: 'vicusbass',
+    url: SITE,
+    jobTitle: 'SDET & Web Development Consultant',
+    description:
+      'Senior SDET and web development consultant with 21+ years of experience in test automation, end-to-end testing strategy, and shipping web applications.',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Cluj-Napoca',
+      addressCountry: 'RO',
+    },
+    knowsAbout: [
+      'Test Automation',
+      'SDET',
+      'Playwright',
+      'pytest',
+      'k6',
+      'Cypress',
+      'TypeScript',
+      'Python',
+      'React',
+      'Next.js',
+      'Astro',
+      'CI/CD',
+      'GitHub Actions',
+      'QA Strategy',
+      'End-to-end Testing',
+    ],
+    sameAs: [
+      'https://github.com/vicusbass',
+      'https://www.linkedin.com/in/vasilepop/',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'vicusbass',
+    url: SITE,
+    author: { '@type': 'Person', name: 'Vasile Pop' },
+  },
 ];
 ---
 
-<Terminal title="vicusbass · ~/home" active="home">
+<Terminal
+  title="Vasile Pop — SDET & Web Development Consultant · Cluj-Napoca"
+  description="Vasile Pop (vicusbass) — SDET and web development consultant in Cluj-Napoca. 21+ years building test automation, end-to-end testing strategy, Playwright, pytest, k6. Available for consulting."
+  active="home"
+  jsonLd={jsonLd}
+>
   <section class="home-hero">
     <div class="home-left">
       <pre class="home-ascii">{`██╗   ██╗██╗ ██████╗██╗   ██╗███████╗██████╗  █████╗ ███████╗███████╗
@@ -53,12 +106,15 @@ const stats: Array<[string, string]> = [
       </div>
 
       <h1 class="home-h1">
-        I write tests that <em>fail loudly</em><br />
-        and code that <em>ships quietly</em>.
+        SDET &amp; web dev consultant.<br />
+        Tests that <em>fail loudly</em>,<br />
+        code that <em>ships quietly</em>.
       </h1>
       <p class="home-lead">
-        I build, test and break software for a living. I write Python, TypeScript whatever the project needs, design end-to-end test
-        strategies, and ship cool side projects. Off the clock I play bass, guitars and raise two small humans.
+        I'm <strong>Vasile Pop</strong> — 21+ years of test automation and web development out of Cluj-Napoca, working remote.
+        I design end-to-end test strategies, build automation in <strong>Python &amp; TypeScript</strong>
+        (Playwright, pytest, k6), and ship production web apps in Astro and Next.js. Available for consulting,
+        framework setup, technical interviews, and tricky QA audits.
       </p>
 
       <div class="home-cta">

@@ -1,0 +1,284 @@
+---
+import { getCollection, render } from 'astro:content';
+import Terminal from '../../layouts/Terminal.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmtDate = (d: Date) => {
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  return `${month} ${d.getFullYear()}`;
+};
+
+const isoDate = post.data.pubDate.toISOString();
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+const url = `${SITE}/blog/${post.id}/`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: isoDate,
+  author: {
+    '@type': 'Person',
+    name: 'Vasile Pop',
+    url: SITE,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Vasile Pop',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': url,
+  },
+  keywords: post.data.tags?.join(', '),
+};
+---
+
+<Terminal
+  title={post.data.title}
+  description={post.data.description}
+  active="blog"
+  ogType="article"
+  publishedTime={isoDate}
+  tags={post.data.tags}
+  jsonLd={jsonLd}
+>
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">/blog //</span>
+    <h1>~/<em>{post.id}</em></h1>
+    <span class="right"><a href="/blog">$ ls /blog</a></span>
+  </div>
+
+  <article class="ml ml-single page-enter">
+    <div class="ml-hd">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="ml-hd-title">~/Mail/inbox/{post.id}.eml</span>
+      <span class="ml-hd-hint"><a href="/blog">← back to inbox</a></span>
+    </div>
+
+    <article class="ml-body">
+      <div class="h-meta">
+        <span class="k">From:</span><span>vasile@vicusbass</span>
+        <span class="k">To:</span><span>subscribers@list.vicusbass</span>
+        <span class="k">Date:</span><span>{fmtDate(post.data.pubDate)}</span>
+        <span class="k">Subject:</span><span class="subject-v">{post.data.title}</span>
+        {post.data.tags.length > 0 && (
+          <>
+            <span class="k">Tags:</span>
+            <span>{post.data.tags.join(', ')}</span>
+          </>
+        )}
+      </div>
+      <h2 class="post-title">{post.data.title}</h2>
+      <p class="excerpt">{post.data.description}</p>
+      <div class="prose"><Content /></div>
+      <p class="sig">— vasile</p>
+    </article>
+
+    <div class="ml-actions">
+      <a href="/blog">← inbox</a>
+      <a href="/contact" class="ml-actions-mid">$ mail vasile</a>
+      <a href="/projects">/work →</a>
+    </div>
+  </article>
+</Terminal>
+
+<style>
+  .term-h h1 {
+    font-family: var(--term-display);
+    font-size: 38px;
+    line-height: 1;
+    margin: 0;
+    color: var(--term-fg);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .term-h h1 em {
+    font-style: normal;
+    color: var(--term-accent);
+    text-shadow: 0 0 12px rgba(var(--term-accent-rgb), 0.35);
+  }
+  .term-h .right a {
+    color: var(--term-dim);
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+  }
+  .ml {
+    margin: 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.5);
+    font-family: var(--term-mono);
+  }
+  .ml-hd {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--term-line);
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  .ml-hd-title {
+    flex: 1;
+  }
+  .ml-hd-hint a {
+    color: var(--term-accent);
+    text-decoration: none;
+  }
+  .ml-hd .dots {
+    display: flex;
+    gap: 5px;
+  }
+  .ml-hd .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .ml-hd .dots i:nth-child(1) {
+    background: var(--term-error);
+  }
+  .ml-hd .dots i:nth-child(2) {
+    background: var(--term-warn);
+  }
+  .ml-hd .dots i:nth-child(3) {
+    background: var(--term-accent);
+  }
+
+  .ml-body {
+    padding: 28px 32px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--term-fg);
+  }
+  .ml-body .post-title {
+    font-family: var(--term-display);
+    font-size: 30px;
+    letter-spacing: -0.01em;
+    color: var(--term-fg);
+    margin: 0 0 6px;
+    font-weight: 500;
+  }
+  .ml-body .h-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 14px;
+    font-size: 11.5px;
+    color: var(--term-dim);
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--term-line);
+    margin-bottom: 18px;
+  }
+  .ml-body .h-meta .k {
+    color: var(--term-accent);
+  }
+  .ml-body .subject-v {
+    color: var(--term-fg);
+    font-weight: 500;
+  }
+  .ml-body .excerpt {
+    color: var(--term-dim);
+    font-style: italic;
+    margin: 0 0 18px;
+  }
+  .ml-body .prose :global(p) {
+    margin: 0 0 14px;
+    max-width: 64ch;
+  }
+  .ml-body .prose :global(ul),
+  .ml-body .prose :global(ol) {
+    margin: 0 0 14px;
+    padding-left: 22px;
+    max-width: 64ch;
+  }
+  .ml-body .prose :global(ul) {
+    list-style: disc outside;
+  }
+  .ml-body .prose :global(ol) {
+    list-style: decimal outside;
+  }
+  .ml-body .prose :global(li) {
+    margin: 4px 0;
+    padding-left: 4px;
+  }
+  .ml-body .prose :global(li::marker) {
+    color: var(--term-accent);
+  }
+  .ml-body .prose :global(code) {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--term-accent);
+    font-size: 0.92em;
+  }
+  .ml-body .prose :global(pre) {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--term-line);
+    padding: 12px 14px;
+    border-radius: 3px;
+    overflow-x: auto;
+    font-size: 12px;
+    max-width: 92ch;
+    margin: 0 0 14px;
+  }
+  .ml-body .prose :global(pre code) {
+    background: transparent;
+    padding: 0;
+    color: var(--term-fg);
+    font-size: inherit;
+  }
+  .ml-body .prose :global(blockquote) {
+    border-left: 2px solid var(--term-accent);
+    margin: 18px 0;
+    padding: 8px 16px;
+    color: var(--term-dim);
+    font-style: italic;
+    background: rgba(var(--term-accent-rgb), 0.04);
+  }
+  .ml-body .prose :global(a) {
+    color: var(--term-accent);
+    border-bottom: 1px dashed currentColor;
+    text-decoration: none;
+  }
+  .ml-body .prose :global(strong) {
+    color: var(--term-accent);
+    font-weight: 500;
+  }
+  .ml-body .sig {
+    margin: 24px 0 0;
+    color: var(--term-dim);
+  }
+
+  .ml-actions {
+    display: flex;
+    gap: 1px;
+    background: var(--term-line);
+    border-top: 1px solid var(--term-line);
+  }
+  .ml-actions a {
+    flex: 1;
+    padding: 12px;
+    background: var(--term-bg);
+    text-align: center;
+    color: var(--term-fg);
+    text-decoration: none;
+    font: inherit;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+  }
+  .ml-actions a:hover {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    color: var(--term-accent);
+  }
+</style>
