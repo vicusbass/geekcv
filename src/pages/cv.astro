@@ -60,7 +60,26 @@ const formatPeriod = (start: string, end?: string) =>
 >
   <div class="term-h" style="padding:40px 24px 16px">
     <span class="lead">03 //</span>
-    <h1>~/<em>cv</em>.htop</h1>
+    <h1>~/<em>history</em>.log</h1>
+    <span class="right">cat ./career.log</span>
+  </div>
+
+  <div class="cv-blocks page-enter">
+    {rendered.map(({ job, Content }, i) => (
+      <article class="cv-block">
+        <div class="when">{formatPeriod(job.data.startDate, job.data.endDate)}  /  entry_{(i + 1).toString().padStart(2, '0')}</div>
+        <h3 class="role">{job.data.title}</h3>
+        <div class="org">@ {job.data.companyUrl ? (
+          <a href={job.data.companyUrl} target="_blank" rel="noreferrer">{job.data.company}</a>
+        ) : job.data.company}</div>
+        <div class="desc"><Content /></div>
+      </article>
+    ))}
+  </div>
+
+  <div class="term-h" style="padding:48px 24px 16px">
+    <span class="lead">04 //</span>
+    <h2>~/<em>cv</em>.htop</h2>
     <span class="right">live skill processes · sorted by CPU</span>
   </div>
 
@@ -118,25 +137,6 @@ const formatPeriod = (start: string, end?: string) =>
       <span><kbd>F9</kbd>Kill</span>
       <span><kbd>F10</kbd>Quit</span>
     </div>
-  </div>
-
-  <div class="term-h" style="padding:48px 24px 16px">
-    <span class="lead">04 //</span>
-    <h2>~/<em>history</em>.log</h2>
-    <span class="right">cat ./career.log</span>
-  </div>
-
-  <div class="cv-blocks page-enter">
-    {rendered.map(({ job, Content }, i) => (
-      <article class="cv-block">
-        <div class="when">{formatPeriod(job.data.startDate, job.data.endDate)}  /  entry_{(i + 1).toString().padStart(2, '0')}</div>
-        <h3 class="role">{job.data.title}</h3>
-        <div class="org">@ {job.data.companyUrl ? (
-          <a href={job.data.companyUrl} target="_blank" rel="noreferrer">{job.data.company}</a>
-        ) : job.data.company}</div>
-        <div class="desc"><Content /></div>
-      </article>
-    ))}
   </div>
 </Terminal>
 
