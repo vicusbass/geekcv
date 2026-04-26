@@ -5,6 +5,7 @@ import Terminal from '../layouts/Terminal.astro';
 import Me from '../components/Me.astro';
 import Shell from '../components/Shell.astro';
 import { getAsset } from '../lib/assets';
+import { formatUptime } from '../lib/uptime';
 
 const latest = (await getCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order)
@@ -26,13 +27,13 @@ const thumbs = await Promise.all(
 
 const stats: Array<[string, string]> = [
   ['HOST', 'cluj-napoca.ro · 46.77°N'],
-  ['UPTIME', '16y 4mo'],
+  ['UPTIME', formatUptime()],
   ['LOCALE', 'en_US.UTF-8 / ro_RO'],
   ['SHELL', '/bin/vasile · zsh 5.9'],
-  ['SDET', 'pytest · playwright · k6'],
+  ['SDET', 'pytest · playwright · k6 · everything'],
   ['DEV', 'astro · next · ts · python'],
-  ['STATUS', '● open for work'],
-  ['SIDE', 'bass guitar · 4-string'],
+  ['STATUS', '● open for side projects'],
+  ['SIDE', 'bass guitar · guitars'],
 ];
 ---
 
@@ -71,7 +72,7 @@ const stats: Array<[string, string]> = [
         {stats.map(([k, v]) => (
           <div class="home-stats-row">
             <span class="home-stats-k">[{k}]</span>
-            <span class="home-stats-v">{v}</span>
+            <span class="home-stats-v" data-uptime={k === 'UPTIME' ? '' : undefined}>{v}</span>
           </div>
         ))}
       </div>

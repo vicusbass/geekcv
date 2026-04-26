@@ -32,5 +32,13 @@ const { title, active } = Astro.props;
       <slot />
     </main>
     <TermFoot />
+
+    <script>
+      import { formatUptime } from '../lib/uptime';
+      const uptime = formatUptime();
+      for (const el of document.querySelectorAll<HTMLElement>('[data-uptime]')) {
+        el.textContent = uptime;
+      }
+    </script>
   </body>
 </html>

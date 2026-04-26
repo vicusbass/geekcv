@@ -1,0 +1,384 @@
+---
+import { getCollection, render } from 'astro:content';
+import Terminal from '../layouts/Terminal.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const rendered = await Promise.all(
+  posts.map(async (post) => {
+    const { Content } = await render(post);
+    return { post, Content };
+  }),
+);
+
+const fmtDate = (d: Date) => {
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  return `${month} ${d.getFullYear()}`;
+};
+
+const total = posts.length;
+---
+
+<Terminal title="vicusbass · ~/blog" active="blog">
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">04 //</span>
+    <h2>~/<em>blog</em>.mbox</h2>
+    <span class="right">{total} entries · mutt-style reader</span>
+  </div>
+
+  <div class="ml page-enter" data-blog-root>
+    <div class="ml-hd">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="ml-hd-title">~/Mail/inbox · {total} messages · {total} unread</span>
+      <span class="ml-hd-hint">j/k to navigate</span>
+    </div>
+
+    <div class="ml-cols">
+      <aside class="ml-list" role="listbox" aria-label="Posts">
+        {posts.map((p, i) => (
+          <button
+            type="button"
+            class="ml-item"
+            data-row
+            data-index={i}
+            data-active={i === 0}
+            role="option"
+            aria-selected={i === 0}
+          >
+            <span class="from">
+              <span data-arrow>{i === 0 ? '▶ ' : '  '}</span>vasile@vicusbass
+            </span>
+            <span class="subj">{p.data.title}</span>
+            <span class="meta">
+              <span>{fmtDate(p.data.pubDate)}</span>
+              <span>{i + 1}/{total}</span>
+            </span>
+          </button>
+        ))}
+      </aside>
+
+      {rendered.map(({ post, Content }, i) => (
+        <article
+          class="ml-body page-enter"
+          data-view
+          data-index={i}
+          hidden={i !== 0}
+        >
+          <div class="h-meta">
+            <span class="k">From:</span><span>vasile@vicusbass</span>
+            <span class="k">To:</span><span>subscribers@list.vicusbass</span>
+            <span class="k">Date:</span><span>{fmtDate(post.data.pubDate)}</span>
+            <span class="k">Subject:</span><span class="subject-v">{post.data.title}</span>
+          </div>
+          <h3>{post.data.title}</h3>
+          <p class="excerpt">{post.data.description}</p>
+          <div class="prose"><Content /></div>
+          <p class="sig">— vasile</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="ml-actions">
+      <button type="button" data-prev>← prev (k)</button>
+      <a class="ml-actions-mid" href="https://vicusbass.com" target="_blank" rel="noreferrer" data-original>$ open original ↗</a>
+      <button type="button" data-next>next (j) →</button>
+    </div>
+  </div>
+</Terminal>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-blog-root]');
+  if (root) {
+    const rows = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-row]'));
+    const views = Array.from(root.querySelectorAll<HTMLElement>('[data-view]'));
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-next]');
+    const total = rows.length;
+    let idx = 0;
+
+    const select = (n: number) => {
+      const target = Math.max(0, Math.min(total - 1, n));
+      if (target === idx) return;
+      idx = target;
+      rows.forEach((row, i) => {
+        const active = i === idx;
+        row.dataset.active = String(active);
+        row.setAttribute('aria-selected', String(active));
+        const arrow = row.querySelector<HTMLElement>('[data-arrow]');
+        if (arrow) arrow.textContent = active ? '▶ ' : '  ';
+      });
+      views.forEach((view, i) => {
+        const active = i === idx;
+        view.hidden = !active;
+        if (active) {
+          view.classList.remove('page-enter');
+          void view.offsetWidth;
+          view.classList.add('page-enter');
+        }
+      });
+      const scrollHost = root.querySelector<HTMLElement>('.ml-body[data-view]:not([hidden])');
+      if (scrollHost) scrollHost.scrollTop = 0;
+      rows[idx]?.scrollIntoView({ block: 'nearest' });
+    };
+
+    rows.forEach((row, i) => row.addEventListener('click', () => select(i)));
+    prev?.addEventListener('click', () => select(idx - 1));
+    next?.addEventListener('click', () => select(idx + 1));
+
+    window.addEventListener('keydown', (e) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'j' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        select(idx + 1);
+      } else if (e.key === 'k' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        select(idx - 1);
+      }
+    });
+  }
+</script>
+
+<style>
+  .ml {
+    margin: 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.5);
+    font-family: var(--term-mono);
+  }
+  .ml-hd {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--term-line);
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  .ml-hd-title {
+    flex: 1;
+  }
+  .ml-hd-hint {
+    color: var(--term-accent);
+  }
+  .ml-hd .dots {
+    display: flex;
+    gap: 5px;
+  }
+  .ml-hd .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .ml-hd .dots i:nth-child(1) {
+    background: var(--term-error);
+  }
+  .ml-hd .dots i:nth-child(2) {
+    background: var(--term-warn);
+  }
+  .ml-hd .dots i:nth-child(3) {
+    background: var(--term-accent);
+  }
+
+  .ml-cols {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 560px;
+  }
+  .ml-list {
+    border-right: 1px solid var(--term-line);
+    overflow: auto;
+    max-height: 720px;
+  }
+  .ml-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px dashed var(--term-line);
+    border-left: 2px solid transparent;
+    padding: 14px 16px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--term-fg);
+    transition: background 0.12s;
+  }
+  .ml-item:hover {
+    background: rgba(var(--term-accent-rgb), 0.04);
+  }
+  .ml-item[data-active='true'] {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    border-left-color: var(--term-accent);
+  }
+  .ml-item .from {
+    color: var(--term-accent);
+    font-weight: 500;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+  }
+  .ml-item .subj {
+    color: var(--term-fg);
+    font-size: 13px;
+    line-height: 1.3;
+    font-family: var(--term-display);
+  }
+  .ml-item .meta {
+    color: var(--term-dim);
+    font-size: 10.5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ml-body {
+    padding: 24px 28px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--term-fg);
+    overflow: auto;
+    max-height: 720px;
+  }
+  .ml-body[hidden] {
+    display: none;
+  }
+  .ml-body h3 {
+    font-family: var(--term-display);
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    color: var(--term-fg);
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+  .ml-body .h-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 14px;
+    font-size: 11.5px;
+    color: var(--term-dim);
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--term-line);
+    margin-bottom: 18px;
+  }
+  .ml-body .h-meta .k {
+    color: var(--term-accent);
+  }
+  .ml-body .subject-v {
+    color: var(--term-fg);
+    font-weight: 500;
+  }
+  .ml-body .excerpt {
+    color: var(--term-dim);
+    font-style: italic;
+    margin: 0 0 18px;
+  }
+  .ml-body .prose :global(p) {
+    margin: 0 0 14px;
+    max-width: 64ch;
+  }
+  .ml-body .prose :global(ul),
+  .ml-body .prose :global(ol) {
+    margin: 0 0 14px;
+    padding-left: 22px;
+    max-width: 64ch;
+  }
+  .ml-body .prose :global(ul) {
+    list-style: disc outside;
+  }
+  .ml-body .prose :global(ol) {
+    list-style: decimal outside;
+  }
+  .ml-body .prose :global(li) {
+    margin: 4px 0;
+    padding-left: 4px;
+  }
+  .ml-body .prose :global(li::marker) {
+    color: var(--term-accent);
+  }
+  .ml-body .prose :global(code) {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--term-accent);
+    font-size: 0.92em;
+  }
+  .ml-body .prose :global(pre) {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--term-line);
+    padding: 12px 14px;
+    border-radius: 3px;
+    overflow-x: auto;
+    font-size: 12px;
+    max-width: 92ch;
+    margin: 0 0 14px;
+  }
+  .ml-body .prose :global(pre code) {
+    background: transparent;
+    padding: 0;
+    color: var(--term-fg);
+    font-size: inherit;
+  }
+  .ml-body .prose :global(blockquote) {
+    border-left: 2px solid var(--term-accent);
+    margin: 18px 0;
+    padding: 8px 16px;
+    color: var(--term-dim);
+    font-style: italic;
+    background: rgba(var(--term-accent-rgb), 0.04);
+  }
+  .ml-body .prose :global(a) {
+    color: var(--term-accent);
+    border-bottom: 1px dashed currentColor;
+    text-decoration: none;
+  }
+  .ml-body .prose :global(strong) {
+    color: var(--term-accent);
+    font-weight: 500;
+  }
+  .ml-body .sig {
+    margin: 24px 0 0;
+    color: var(--term-dim);
+  }
+
+  .ml-actions {
+    display: flex;
+    gap: 1px;
+    background: var(--term-line);
+    border-top: 1px solid var(--term-line);
+  }
+  .ml-actions button,
+  .ml-actions a {
+    flex: 1;
+    padding: 12px;
+    background: var(--term-bg);
+    text-align: center;
+    color: var(--term-fg);
+    text-decoration: none;
+    font: inherit;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    border: 0;
+    cursor: pointer;
+  }
+  .ml-actions button:hover,
+  .ml-actions a:hover {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    color: var(--term-accent);
+  }
+
+  @media (max-width: 900px) {
+    .ml-cols {
+      grid-template-columns: 1fr;
+    }
+    .ml-list {
+      border-right: 0;
+      border-bottom: 1px solid var(--term-line);
+      max-height: 280px;
+    }
+  }
+</style>

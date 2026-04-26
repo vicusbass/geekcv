@@ -1,0 +1,326 @@
+---
+import Terminal from '../layouts/Terminal.astro';
+
+const EMAIL = 'vasile.pop@gmail.com';
+const LINKEDIN = 'https://www.linkedin.com/in/vasilepop/';
+const GITHUB = 'https://github.com/vicusbass';
+const LOCATION = 'Cluj-Napoca, RO';
+---
+
+<Terminal title="vicusbass · ~/contact" active="contact">
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">05 //</span>
+    <h2>~/<em>contact</em>.send</h2>
+    <span class="right">$ mail vasile@vicusbass</span>
+  </div>
+
+  <form class="compose page-enter" data-compose>
+    <div class="compose-hd">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="compose-title">~/.compose/draft.eml — vim 9.0</span>
+      <span class="compose-mode">-- INSERT --</span>
+    </div>
+    <div class="compose-fields">
+      <span class="k">To:</span>
+      <input value={EMAIL} disabled class="locked" />
+      <span class="k">From:</span>
+      <input
+        type="text"
+        name="from"
+        placeholder="your name <your@email>"
+        required
+        autocomplete="name"
+      />
+      <span class="k">Subject:</span>
+      <input type="text" name="subject" placeholder="re: that thing" />
+    </div>
+    <div class="compose-body">
+      <textarea
+        name="body"
+        rows="12"
+        placeholder={`hi vasile,\n\ntell me about a stack you'd like help with…\n\nI usually reply within a working day.`}
+      ></textarea>
+    </div>
+    <div class="compose-actions">
+      <span><kbd>:wq</kbd> = send · <kbd>⌘↵</kbd> = send · <kbd>:q!</kbd> = abandon draft</span>
+      <button type="submit" class="btn btn-prim">$ :wq → send →</button>
+    </div>
+  </form>
+
+  <div class="info">
+    <div class="card">
+      <div class="lbl">[ EMAIL ]</div>
+      <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+      <div class="card-foot">preferred · ~24h reply</div>
+    </div>
+    <div class="card">
+      <div class="lbl">[ LINKEDIN ]</div>
+      <a href={LINKEDIN} target="_blank" rel="noreferrer">/in/vasilepop</a>
+      <div class="card-foot">professional · slow but I read</div>
+    </div>
+    <div class="card">
+      <div class="lbl">[ GITHUB ]</div>
+      <a href={GITHUB} target="_blank" rel="noreferrer">@vicusbass</a>
+      <div class="card-foot">code · open issues welcome</div>
+    </div>
+  </div>
+
+  <pre class="ascii-sig">
+   ─── vasile pop · sdet · web dev · bass ───────────────────
+        ✉  {EMAIL}
+        ◐  {LOCATION}  ·  46.77° N / 23.59° E
+        ●  open for consulting · 2026
+   ──────────────────────────────────────────────────────────
+  </pre>
+
+  <div class="sent" data-sent hidden>
+    <div class="ok">
+      <pre>{`✓ ─────────────────────────────
+  message queued · opening mailto://
+  ${EMAIL}
+  ─────────────────────────────`}</pre>
+      <div>opening your mail client...</div>
+    </div>
+  </div>
+</Terminal>
+
+<script is:inline define:vars={{ EMAIL }}>
+  const form = document.querySelector('[data-compose]');
+  const sent = document.querySelector('[data-sent]');
+
+  if (form && sent) {
+    const send = (e) => {
+      e?.preventDefault?.();
+      const fd = new FormData(form);
+      const from = (fd.get('from') ?? '').toString().trim();
+      const subject = (fd.get('subject') ?? '').toString().trim();
+      const body = (fd.get('body') ?? '').toString();
+
+      const url = `mailto:${EMAIL}?subject=${encodeURIComponent(
+        subject || 'hello',
+      )}&body=${encodeURIComponent(`${body}\n\n— ${from || 'someone'}`)}`;
+
+      sent.hidden = false;
+      window.setTimeout(() => {
+        window.location.href = url;
+        window.setTimeout(() => {
+          sent.hidden = true;
+        }, 2000);
+      }, 1100);
+    };
+
+    form.addEventListener('submit', send);
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        send();
+      }
+    });
+  }
+</script>
+
+<style>
+  .compose {
+    margin: 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.5);
+    font-family: var(--term-mono);
+  }
+  .compose-hd {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--term-line);
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  .compose-title {
+    flex: 1;
+  }
+  .compose-mode {
+    color: var(--term-accent);
+  }
+  .compose-hd .dots {
+    display: flex;
+    gap: 5px;
+  }
+  .compose-hd .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .compose-hd .dots i:nth-child(1) {
+    background: var(--term-error);
+  }
+  .compose-hd .dots i:nth-child(2) {
+    background: var(--term-warn);
+  }
+  .compose-hd .dots i:nth-child(3) {
+    background: var(--term-accent);
+  }
+
+  .compose-fields {
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 14px;
+    border-bottom: 1px solid var(--term-line);
+    font-size: 13px;
+    align-items: center;
+  }
+  .compose-fields .k {
+    color: var(--term-accent);
+    letter-spacing: 0.04em;
+  }
+  .compose-fields input,
+  .compose-fields select {
+    background: transparent;
+    border: 0;
+    border-bottom: 1px dashed var(--term-line);
+    color: var(--term-fg);
+    font: inherit;
+    outline: none;
+    padding: 6px 0;
+    width: 100%;
+    caret-color: var(--term-accent);
+  }
+  .compose-fields input:focus,
+  .compose-fields select:focus {
+    border-color: var(--term-accent);
+  }
+  .compose-fields .locked {
+    color: var(--term-accent);
+    opacity: 0.85;
+  }
+  .compose-fields select option {
+    background: var(--term-bg);
+    color: var(--term-fg);
+  }
+
+  .compose-body {
+    padding: 14px 16px;
+  }
+  .compose-body textarea {
+    width: 100%;
+    min-height: 260px;
+    background: transparent;
+    border: 0;
+    color: var(--term-fg);
+    font: inherit;
+    font-size: 13.5px;
+    line-height: 1.6;
+    outline: none;
+    resize: vertical;
+    caret-color: var(--term-accent);
+  }
+  .compose-body textarea::placeholder {
+    color: var(--term-dim);
+    opacity: 0.6;
+  }
+
+  .compose-actions {
+    padding: 12px 16px;
+    border-top: 1px solid var(--term-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--term-dim);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .compose-actions kbd {
+    background: rgba(var(--term-accent-rgb), 0.15);
+    color: var(--term-accent);
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 10px;
+    border-radius: 2px;
+  }
+
+  .info {
+    margin: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .card {
+    padding: 18px;
+    border: 1px solid var(--term-line);
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 12.5px;
+  }
+  .card .lbl {
+    font-size: 11px;
+    color: var(--term-accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .card a {
+    color: var(--term-fg);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--term-line-strong);
+  }
+  .card a:hover {
+    color: var(--term-accent);
+    border-color: var(--term-accent);
+  }
+  .card .card-foot {
+    color: var(--term-dim);
+    margin-top: 8px;
+    font-size: 11px;
+  }
+
+  .ascii-sig {
+    margin: 24px;
+    padding: 24px;
+    border: 1px solid var(--term-line);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--term-accent);
+    font-size: 10.5px;
+    line-height: 1.1;
+    white-space: pre;
+    text-shadow: 0 0 8px rgba(var(--term-accent-rgb), 0.3);
+    text-align: center;
+    overflow-x: auto;
+  }
+
+  .sent {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(6, 8, 10, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--term-mono);
+    color: var(--term-accent);
+    font-size: 18px;
+  }
+  .sent[hidden] {
+    display: none;
+  }
+  .sent .ok {
+    border: 2px solid var(--term-accent);
+    padding: 32px 48px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(var(--term-accent-rgb), 0.3);
+  }
+  .sent pre {
+    color: var(--term-accent);
+    text-shadow: 0 0 8px rgba(var(--term-accent-rgb), 0.4);
+    margin: 0 0 16px;
+    font-size: 11px;
+    line-height: 1.1;
+    white-space: pre;
+    text-align: left;
+  }
+
+  @media (max-width: 900px) {
+    .info {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

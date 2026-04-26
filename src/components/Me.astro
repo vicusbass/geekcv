@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import profile from '../assets/profile.png';
+import { formatUptime } from '../lib/uptime';
+
+const exp = formatUptime();
 ---
 
 <div class="win me-win">
@@ -22,7 +25,7 @@ import profile from '../assets/profile.png';
       <dl class="me-uid">
         <dt>uid</dt><dd>1000</dd>
         <dt>loc</dt><dd>cluj, ro</dd>
-        <dt>exp</dt><dd>16y</dd>
+        <dt>exp</dt><dd data-uptime>{exp}</dd>
       </dl>
     </div>
   </div>

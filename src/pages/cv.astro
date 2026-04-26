@@ -1,0 +1,411 @@
+---
+import { getCollection, render } from 'astro:content';
+import Terminal from '../layouts/Terminal.astro';
+
+const jobs = (await getCollection('job')).slice();
+
+const monthToNum: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+};
+
+const parseStart = (s: string): number => {
+  const [mon, year] = s.toLowerCase().trim().split(/\s+/);
+  const m = monthToNum[mon?.slice(0, 3) ?? ''] ?? 0;
+  const y = Number(year ?? mon);
+  if (!Number.isFinite(y)) return 0;
+  return new Date(y, m, 1).getTime();
+};
+
+jobs.sort((a, b) => parseStart(b.data.startDate) - parseStart(a.data.startDate));
+
+const rendered = await Promise.all(
+  jobs.map(async (j) => {
+    const { Content } = await render(j);
+    return { job: j, Content };
+  }),
+);
+
+const skills: Array<{
+  pid: number;
+  user: string;
+  ni: string;
+  stat: 'R' | 'S';
+  cpu: number;
+  mem: number;
+  time: string;
+  cmdHead: string;
+  cmdTail: string;
+}> = [
+  { pid: 1024, user: 'vicus', ni: '-5', stat: 'R', cpu: 192.4, mem: 88, time: '16:24:11', cmdHead: 'python', cmdTail: ' --pytest --playwright (sdet)' },
+  { pid: 1031, user: 'vicus', ni: '-2', stat: 'R', cpu: 168.2, mem: 62, time: '14:12:02', cmdHead: 'typescript', cmdTail: ' --node --next --astro' },
+  { pid: 1042, user: 'vicus', ni: ' 0', stat: 'R', cpu: 124.6, mem: 55, time: '12:02:18', cmdHead: 'react', cmdTail: ' --hooks --jsx' },
+  { pid: 1055, user: 'vicus', ni: ' 0', stat: 'R', cpu: 88.1, mem: 40, time: '08:30:42', cmdHead: 'k6', cmdTail: ' --load --soak (perf)' },
+  { pid: 1064, user: 'vicus', ni: ' 0', stat: 'S', cpu: 46.0, mem: 34, time: '06:14:05', cmdHead: 'docker', cmdTail: ' --compose --kind' },
+  { pid: 1071, user: 'vicus', ni: ' 0', stat: 'S', cpu: 38.4, mem: 28, time: '04:08:24', cmdHead: 'github-actions', cmdTail: ' --ci --cd' },
+  { pid: 1085, user: 'vicus', ni: ' 1', stat: 'S', cpu: 31.2, mem: 22, time: '03:42:11', cmdHead: 'postgres', cmdTail: ' --query --schema' },
+  { pid: 1097, user: 'vicus', ni: ' 0', stat: 'R', cpu: 24.0, mem: 18, time: '02:18:50', cmdHead: 'tailwind', cmdTail: ' --css --jit' },
+  { pid: 1108, user: 'vicus', ni: ' 5', stat: 'S', cpu: 18.6, mem: 14, time: '01:55:32', cmdHead: 'figma', cmdTail: ' --inspect --handoff' },
+  { pid: 9001, user: 'vicus', ni: '-9', stat: 'R', cpu: 247.8, mem: 99, time: '∞', cmdHead: 'bass-guitar', cmdTail: ' --4-string --groove' },
+];
+
+const formatPeriod = (start: string, end?: string) =>
+  `${start} — ${end ?? 'Now'}`;
+---
+
+<Terminal title="vicusbass · ~/cv" active="cv">
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">03 //</span>
+    <h2>~/<em>cv</em>.htop</h2>
+    <span class="right">live skill processes · sorted by CPU</span>
+  </div>
+
+  <div class="htop page-enter">
+    <div class="htop-hd">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="htop-title">vasile@vicusbass · htop · <span data-htop-clock>--:--:--</span></span>
+      <span>uptime: <span data-uptime>—</span> · load: 1.42 0.84 0.31</span>
+    </div>
+
+    <div class="htop-stats">
+      <div class="htop-row-stat">
+        <span class="lbl">CPU</span>
+        <div class="bar"><i data-htop-cpu style="width:76%"></i></div>
+        <span class="bar-val" data-htop-cpu-val>76%</span>
+      </div>
+      <div class="htop-row-stat">
+        <span class="lbl">MEM</span>
+        <div class="bar"><i class="warn" data-htop-mem style="width:62%"></i></div>
+        <span class="bar-val" data-htop-mem-val>62%</span>
+      </div>
+      <div class="htop-row-stat">
+        <span class="lbl">SWP</span>
+        <div class="bar"><i class="err" style="width:12%"></i></div>
+        <span class="bar-val">12%</span>
+      </div>
+      <div class="htop-row-stat">
+        <span class="lbl">TASKS</span>
+        <div class="task-line">10 total · 6 running · 4 sleeping · 0 zombie</div>
+      </div>
+    </div>
+
+    <div class="htop-tabhd">
+      <span>PID</span><span>USER</span><span>PRI</span><span>STAT</span>
+      <span>CPU%</span><span>MEM%</span><span>TIME+</span><span>COMMAND</span>
+    </div>
+    {skills.map((s) => (
+      <div class="htop-row">
+        <span class="pid">{s.pid}</span>
+        <span class="user">{s.user}</span>
+        <span class={`pri${s.ni.trim().startsWith('-') ? ' high' : ''}`}>{s.ni}</span>
+        <span class={s.stat === 'R' ? 'stat-r' : 'stat-s'}>{s.stat}</span>
+        <span class={s.cpu > 100 ? 'val-warn' : 'val-fg'}>{s.cpu.toFixed(1)}</span>
+        <span class={s.mem > 80 ? 'val-warn' : 'val-fg'}>{s.mem.toFixed(1)}</span>
+        <span class="time">{s.time}</span>
+        <span class="cmd"><b>{s.cmdHead}</b>{s.cmdTail}</span>
+      </div>
+    ))}
+
+    <div class="htop-foot">
+      <span><kbd>F1</kbd>Help</span>
+      <span><kbd>F2</kbd>Setup</span>
+      <span><kbd>F5</kbd>Tree</span>
+      <span><kbd>F6</kbd>Sort</span>
+      <span><kbd>F9</kbd>Kill</span>
+      <span><kbd>F10</kbd>Quit</span>
+    </div>
+  </div>
+
+  <div class="term-h" style="padding:48px 24px 16px">
+    <span class="lead">04 //</span>
+    <h2>~/<em>history</em>.log</h2>
+    <span class="right">cat ./career.log</span>
+  </div>
+
+  <div class="cv-blocks page-enter">
+    {rendered.map(({ job, Content }, i) => (
+      <article class="cv-block">
+        <div class="when">{formatPeriod(job.data.startDate, job.data.endDate)}  /  entry_{(i + 1).toString().padStart(2, '0')}</div>
+        <h3 class="role">{job.data.title}</h3>
+        <div class="org">@ {job.data.companyUrl ? (
+          <a href={job.data.companyUrl} target="_blank" rel="noreferrer">{job.data.company}</a>
+        ) : job.data.company}</div>
+        <div class="desc"><Content /></div>
+      </article>
+    ))}
+  </div>
+</Terminal>
+
+<script>
+  const clock = document.querySelector<HTMLElement>('[data-htop-clock]');
+  const cpuBar = document.querySelector<HTMLElement>('[data-htop-cpu]');
+  const cpuVal = document.querySelector<HTMLElement>('[data-htop-cpu-val]');
+  const memBar = document.querySelector<HTMLElement>('[data-htop-mem]');
+  const memVal = document.querySelector<HTMLElement>('[data-htop-mem-val]');
+
+  const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+  let cpu = 76;
+  let mem = 62;
+
+  const tick = () => {
+    if (clock) clock.textContent = new Date().toLocaleTimeString('en-GB');
+    cpu = clamp(cpu + (Math.random() - 0.5) * 6, 40, 98);
+    mem = clamp(mem + (Math.random() - 0.5) * 4, 40, 92);
+    if (cpuBar) cpuBar.style.width = `${cpu}%`;
+    if (cpuVal) cpuVal.textContent = `${cpu.toFixed(0)}%`;
+    if (memBar) memBar.style.width = `${mem}%`;
+    if (memVal) memVal.textContent = `${mem.toFixed(0)}%`;
+  };
+  tick();
+  setInterval(tick, 900);
+</script>
+
+<style>
+  .htop {
+    margin: 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.5);
+    font-family: var(--term-mono);
+    font-size: 12.5px;
+  }
+  .htop-hd {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--term-line);
+    color: var(--term-dim);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .htop-title {
+    flex: 1;
+  }
+  .htop-hd .dots {
+    display: flex;
+    gap: 5px;
+  }
+  .htop-hd .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .htop-hd .dots i:nth-child(1) {
+    background: var(--term-error);
+  }
+  .htop-hd .dots i:nth-child(2) {
+    background: var(--term-warn);
+  }
+  .htop-hd .dots i:nth-child(3) {
+    background: var(--term-accent);
+  }
+
+  .htop-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--term-line);
+    color: var(--term-dim);
+    font-size: 11.5px;
+  }
+  .htop-row-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .htop-row-stat .lbl {
+    color: var(--term-accent);
+    width: 46px;
+  }
+  .bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--term-line);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--term-accent);
+    box-shadow: 0 0 8px rgba(var(--term-accent-rgb), 0.4);
+    transition: width 0.6s ease;
+  }
+  .bar i.warn {
+    background: var(--term-warn);
+    box-shadow: 0 0 8px rgba(255, 217, 61, 0.4);
+  }
+  .bar i.err {
+    background: var(--term-error);
+    box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+  }
+  .bar-val {
+    color: var(--term-fg);
+    width: 42px;
+    text-align: right;
+  }
+  .task-line {
+    flex: 1;
+    color: var(--term-fg);
+  }
+
+  .htop-tabhd {
+    display: grid;
+    grid-template-columns: 60px 92px 50px 56px 64px 64px 78px 1fr;
+    padding: 8px 16px;
+    background: rgba(var(--term-accent-rgb), 0.85);
+    color: var(--term-bg);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .htop-row {
+    display: grid;
+    grid-template-columns: 60px 92px 50px 56px 64px 64px 78px 1fr;
+    padding: 6px 16px;
+    border-bottom: 1px dashed var(--term-line);
+    color: var(--term-fg);
+    font-size: 12px;
+    align-items: center;
+  }
+  .htop-row:hover {
+    background: rgba(var(--term-accent-rgb), 0.04);
+  }
+  .htop-row .pid {
+    color: var(--term-dim);
+  }
+  .htop-row .user {
+    color: var(--term-accent);
+  }
+  .htop-row .pri.high {
+    color: var(--term-warn);
+  }
+  .htop-row .stat-r {
+    color: var(--term-accent);
+  }
+  .htop-row .stat-s {
+    color: var(--term-dim);
+  }
+  .htop-row .val-warn {
+    color: var(--term-warn);
+  }
+  .htop-row .val-fg {
+    color: var(--term-fg);
+  }
+  .htop-row .time {
+    color: var(--term-dim);
+  }
+  .htop-row .cmd {
+    color: var(--term-fg);
+  }
+  .htop-row .cmd b {
+    color: var(--term-accent);
+    font-weight: 500;
+  }
+
+  .htop-foot {
+    padding: 8px 16px;
+    border-top: 1px solid var(--term-line);
+    display: flex;
+    gap: 18px;
+    color: var(--term-dim);
+    font-size: 11px;
+    background: rgba(0, 0, 0, 0.4);
+    flex-wrap: wrap;
+  }
+  .htop-foot kbd {
+    background: var(--term-accent);
+    color: var(--term-bg);
+    padding: 1px 6px;
+    font-family: inherit;
+    font-size: 10px;
+    border-radius: 2px;
+    margin-right: 4px;
+  }
+
+  .cv-blocks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 24px;
+  }
+  .cv-block {
+    padding: 18px;
+    border: 1px solid var(--term-line);
+    background: rgba(0, 0, 0, 0.3);
+  }
+  .cv-block .when {
+    font-size: 11px;
+    color: var(--term-accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .cv-block .role {
+    font-family: var(--term-display);
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--term-fg);
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+  .cv-block .org {
+    font-size: 11.5px;
+    color: var(--term-dim);
+    margin-bottom: 8px;
+  }
+  .cv-block .org a {
+    color: var(--term-fg);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--term-line-strong);
+  }
+  .cv-block .org a:hover {
+    color: var(--term-accent);
+    border-color: var(--term-accent);
+  }
+  .cv-block .desc {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--term-fg);
+    opacity: 0.92;
+  }
+  .cv-block .desc :global(p) {
+    margin: 0 0 8px;
+  }
+  .cv-block .desc :global(ul) {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .cv-block .desc :global(li) {
+    margin: 4px 0;
+  }
+
+  @media (max-width: 1100px) {
+    .cv-blocks {
+      grid-template-columns: 1fr;
+    }
+    .htop-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 700px) {
+    .htop-tabhd,
+    .htop-row {
+      grid-template-columns: 56px 80px 56px 56px 1fr;
+    }
+    .htop-tabhd > :nth-child(n + 5),
+    .htop-row > :nth-child(n + 5) {
+      display: none;
+    }
+    .htop-tabhd > :nth-child(8),
+    .htop-row > :nth-child(8) {
+      display: block;
+      grid-column: 5;
+    }
+  }
+</style>
