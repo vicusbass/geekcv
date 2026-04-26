@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{ts,tsx,js,jsx,mjs,cjs,json,md}"
+      run: npx @biomejs/biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+    astro-check:
+      glob: "*.{astro,ts,tsx}"
+      run: npx astro check
+
+pre-push:
+  commands:
+    typecheck:
+      run: npx astro check

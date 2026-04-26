@@ -1,0 +1,180 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Terminal from '../layouts/Terminal.astro';
+import { getAsset } from '../lib/assets';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+// Pre-resolve optimized screenshots so the browser swap is instant.
+const shots = await Promise.all(
+  projects.map(async (p) => {
+    const src = getAsset(p.data.shot);
+    if (!src) return null;
+    const img = await getImage({
+      src,
+      width: 960,
+      format: 'webp',
+      quality: 82,
+    });
+    return { src: img.src, width: img.attributes.width, height: img.attributes.height };
+  })
+);
+
+const total = projects.length;
+const totalPad = total.toString().padStart(2, '0');
+---
+
+<Terminal title="vicusbass · ~/work" active="work">
+  <div class="term-h" style="padding:40px 24px 16px">
+    <span class="lead">02 //</span>
+    <h2>~/<em>work</em>.idx</h2>
+    <span class="right">{total} entries · j/k or click</span>
+  </div>
+
+  <div class="work" data-projects-root>
+    <aside class="work-idx">
+      <div class="work-idx-hd">
+        <span>~/work · index</span>
+        <span class="count" data-count>01 / {totalPad}</span>
+      </div>
+      <div class="work-idx-list" role="listbox" aria-label="Projects">
+        {projects.map((p, i) => (
+          <button
+            type="button"
+            class="work-row"
+            data-row
+            data-index={i}
+            data-active={i === 0}
+            role="option"
+            aria-selected={i === 0}
+          >
+            <span class="num">{(i + 1).toString().padStart(2, '0')}</span>
+            <div>
+              <div class="ttl"><span data-arrow>{i === 0 ? '▸ ' : '  '}</span>{p.data.title}</div>
+              <div class="sub">{p.data.kind}</div>
+            </div>
+            <span class="yr">{p.data.year}</span>
+          </button>
+        ))}
+      </div>
+    </aside>
+
+    {projects.map((p, i) => {
+      const shot = shots[i];
+      return (
+        <section
+          class="work-view page-enter"
+          data-view
+          data-index={i}
+          hidden={i !== 0}
+        >
+          <div class="view-hd">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <span class="url">$ curl -L {p.data.url}</span>
+            <span class="live">200 OK</span>
+          </div>
+
+          <div class="shot">
+            {shot ? (
+              <img src={shot.src} alt={p.data.title} width={shot.width} height={shot.height} loading={i === 0 ? 'eager' : 'lazy'} />
+            ) : (
+              <div class="shot-fb">
+                <pre>{p.data.asciiFallback ?? p.data.title}</pre>
+              </div>
+            )}
+            <div class="shot-overlay"></div>
+          </div>
+
+          <div class="view-bd">
+            <div>
+              <div class="lead">{p.data.kind} · {p.data.year}</div>
+              <h3>{p.data.title}</h3>
+              <p>{p.data.blurb}</p>
+              <div class="cta">
+                <a class="btn btn-prim" href={p.data.url} target="_blank" rel="noreferrer">$ open ↗</a>
+                <a class="btn" href={p.data.url} target="_blank" rel="noreferrer">$ inspect</a>
+              </div>
+            </div>
+            <div class="view-meta">
+              <div class="line"><span class="k">role</span><span class="v">{p.data.role}</span></div>
+              <div class="line"><span class="k">year</span><span class="v">{p.data.year}</span></div>
+              <div class="line"><span class="k">kind</span><span class="v">{p.data.kind}</span></div>
+              <div class="line">
+                <span class="k">stack</span>
+                <div class="stack">{p.data.stack.map((s) => <span>{s}</span>)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="view-foot">
+            <span><kbd>j</kbd>next  <kbd>k</kbd>prev  <kbd>↵</kbd>open</span>
+            <span>~/work/{p.id}.idx · {(i + 1).toString().padStart(2, '0')} of {totalPad}</span>
+          </div>
+        </section>
+      );
+    })}
+  </div>
+</Terminal>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-projects-root]');
+  if (root) {
+    const rows = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-row]'));
+    const views = Array.from(root.querySelectorAll<HTMLElement>('[data-view]'));
+    const count = root.querySelector<HTMLElement>('[data-count]');
+    const total = rows.length;
+    const totalPad = total.toString().padStart(2, '0');
+    let idx = 0;
+
+    const select = (next: number) => {
+      const n = Math.max(0, Math.min(total - 1, next));
+      if (n === idx) return;
+      idx = n;
+
+      rows.forEach((row, i) => {
+        const active = i === idx;
+        row.dataset.active = String(active);
+        row.setAttribute('aria-selected', String(active));
+        const arrow = row.querySelector<HTMLElement>('[data-arrow]');
+        if (arrow) arrow.textContent = active ? '▸ ' : '  ';
+      });
+      views.forEach((view, i) => {
+        const active = i === idx;
+        view.hidden = !active;
+        if (active) {
+          view.classList.remove('page-enter');
+          // restart glitch transition
+          void view.offsetWidth;
+          view.classList.add('page-enter');
+        }
+      });
+      if (count) count.textContent = `${(idx + 1).toString().padStart(2, '0')} / ${totalPad}`;
+      rows[idx]?.scrollIntoView({ block: 'nearest' });
+    };
+
+    rows.forEach((row, i) =>
+      row.addEventListener('click', () => select(i)),
+    );
+
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (e.key === 'j' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        select(idx + 1);
+      } else if (e.key === 'k' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        select(idx - 1);
+      } else if (e.key === 'Enter') {
+        const view = views[idx];
+        const link = view?.querySelector<HTMLAnchorElement>('a.btn-prim');
+        if (link) window.open(link.href, '_blank', 'noopener,noreferrer');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+  }
+</script>

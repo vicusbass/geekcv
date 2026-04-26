@@ -1,0 +1,181 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Terminal from '../layouts/Terminal.astro';
+import { getAsset } from '../lib/assets';
+
+const latest = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const thumbs = await Promise.all(
+  latest.map(async (p) => {
+    const src = getAsset(p.data.shot);
+    if (!src) return null;
+    const img = await getImage({
+      src,
+      width: 240,
+      format: 'webp',
+      quality: 80,
+    });
+    return img.src;
+  }),
+);
+---
+
+<Terminal title="vicusbass · ~/home" active="home">
+  <section style="padding:48px 24px 24px;display:grid;grid-template-columns:1fr;gap:24px">
+    <pre style="color:var(--term-accent);text-shadow:0 0 12px rgba(var(--term-accent-rgb),.4);font-size:10.5px;line-height:1.1;margin:0;font-weight:500;overflow:auto">{`██╗   ██╗██╗ ██████╗██╗   ██╗███████╗██████╗  █████╗ ███████╗███████╗
+██║   ██║██║██╔════╝██║   ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝
+██║   ██║██║██║     ██║   ██║███████╗██████╔╝███████║███████╗███████╗
+╚██╗ ██╔╝██║██║     ██║   ██║╚════██║██╔══██╗██╔══██║╚════██║╚════██║
+ ╚████╔╝ ██║╚██████╗╚██████╔╝███████║██████╔╝██║  ██║███████║███████║
+  ╚═══╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝`}</pre>
+
+    <h1 style="font-family:var(--term-display);font-size:36px;line-height:1.2;letter-spacing:-.01em;font-weight:500;color:var(--term-fg);margin:8px 0 0;max-width:30ch">
+      I write tests that <em style="font-style:normal;color:var(--term-accent);background:rgba(var(--term-accent-rgb),.1);padding:0 6px;border-radius:3px;text-shadow:0 0 12px rgba(var(--term-accent-rgb),.4)">fail loudly</em><br/>
+      and code that <em style="font-style:normal;color:var(--term-accent);background:rgba(var(--term-accent-rgb),.1);padding:0 6px;border-radius:3px;text-shadow:0 0 12px rgba(var(--term-accent-rgb),.4)">ships quietly</em>.
+    </h1>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn btn-prim" href="/projects">$ open ./work →</a>
+      <a class="btn" href="/cv">$ cat cv.log</a>
+      <a class="btn" href="/blog">$ ls /blog</a>
+      <a class="btn" href="/contact">$ mail vasile</a>
+    </div>
+  </section>
+
+  <section style="padding:0 24px">
+    <div class="term-h" style="padding:48px 0 16px">
+      <span class="lead">02 //</span>
+      <h2>~/<em>latest</em></h2>
+      <span class="right">selected · last 24mo</span>
+    </div>
+
+    <div class="latest-grid">
+      {latest.map((p, i) => (
+        <a class="latest-card" href={p.data.url} target="_blank" rel="noreferrer">
+          <div class="latest-card-hd">
+            <span class="latest-id">./{p.id}</span>
+            <span class="latest-yr">{p.data.year}</span>
+          </div>
+          {thumbs[i] && (
+            <div class="latest-thumb" aria-hidden="true">
+              <img src={thumbs[i]} alt="" loading="lazy" />
+              <span class="latest-thumb-scan"></span>
+            </div>
+          )}
+          <div class="latest-ttl">{p.data.title}</div>
+          <div class="latest-card-ft">
+            <span>{p.data.kind}</span>
+            <span>↗</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div style="margin-top:16px;text-align:right">
+      <a class="btn" href="/projects">$ ls /work →</a>
+    </div>
+  </section>
+</Terminal>
+
+<style>
+  .latest-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--term-line);
+    border: 1px solid var(--term-line);
+    margin-top: 16px;
+  }
+  .latest-card {
+    background: var(--term-bg);
+    padding: 20px 18px;
+    text-decoration: none;
+    color: var(--term-fg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 180px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .latest-card:hover {
+    background: rgba(var(--term-accent-rgb), 0.06);
+  }
+  .latest-thumb {
+    position: relative;
+    width: 100%;
+    height: 96px;
+    overflow: hidden;
+    border: 1px solid var(--term-line);
+    background: #0a0e10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+  }
+  .latest-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    filter: saturate(0.75) contrast(1.05) brightness(0.95);
+  }
+  .latest-thumb-scan {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(180deg, transparent 0 2px, rgba(0, 0, 0, 0.25) 3px);
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
+  .latest-card:hover .latest-thumb {
+    border-color: var(--term-line-strong);
+    box-shadow: 0 0 12px rgba(var(--term-accent-rgb), 0.18);
+  }
+  .latest-card:hover .latest-thumb img {
+    filter: saturate(0.9) contrast(1.1) brightness(1);
+  }
+  .latest-card-hd {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  .latest-id {
+    color: var(--term-accent);
+  }
+  .latest-yr {
+    font-variant-numeric: tabular-nums;
+  }
+  .latest-ttl {
+    font-family: var(--term-display);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-top: auto;
+    color: var(--term-fg);
+  }
+  .latest-card:hover .latest-ttl {
+    color: var(--term-accent);
+    text-shadow: 0 0 8px rgba(var(--term-accent-rgb), 0.3);
+  }
+  .latest-card-ft {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  @media (max-width: 900px) {
+    .latest-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .latest-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+interface Props {
+  active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+}
+
+const { active } = Astro.props;
+
+const items = [
+  { id: 'home',    href: '/',         label: '/home' },
+  { id: 'work',    href: '/projects', label: '/work' },
+  { id: 'cv',      href: '/cv',       label: '/cv' },
+  { id: 'blog',    href: '/blog',     label: '/blog' },
+  { id: 'contact', href: '/contact',  label: '/contact' },
+] as const;
+---
+
+<header class="term-top">
+  <div class="brand">
+    <span class="led"></span>
+    <span><b>vicusbass</b>@vasile <span style="color:var(--term-accent)">~$</span> portfolio</span>
+  </div>
+  <nav class="nav">
+    {items.map(it => (
+      <a href={it.href} data-active={active === it.id}>{it.label}</a>
+    ))}
+  </nav>
+  <div class="clock" id="term-clock">--:--:--</div>
+</header>
+
+<script>
+  const clock = document.getElementById('term-clock');
+  if (clock) {
+    const tick = () => {
+      const t = new Date();
+      const time = t.toLocaleString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+      clock.textContent = `${time} EET`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>
