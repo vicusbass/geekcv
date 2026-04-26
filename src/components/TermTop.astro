@@ -6,26 +6,56 @@ interface Props {
 const { active } = Astro.props;
 
 const items = [
-  { id: 'home',    href: '/',         label: '/home' },
-  { id: 'work',    href: '/projects', label: '/work' },
-  { id: 'cv',      href: '/cv',       label: '/cv' },
-  { id: 'blog',    href: '/blog',     label: '/blog' },
-  { id: 'contact', href: '/contact',  label: '/contact' },
+  { id: 'home',    href: '/',         label: '/home',    cmd: 'cd ~' },
+  { id: 'work',    href: '/projects', label: '/work',    cmd: 'cd /work' },
+  { id: 'cv',      href: '/cv',       label: '/cv',      cmd: 'cd /cv' },
+  { id: 'blog',    href: '/blog',     label: '/blog',    cmd: 'cd /blog' },
+  { id: 'contact', href: '/contact',  label: '/contact', cmd: 'cd /contact' },
 ] as const;
 ---
 
 <header class="term-top">
   <div class="brand">
     <span class="led"></span>
-    <span><b>vicusbass</b>@vasile <span style="color:var(--term-accent)">~$</span> portfolio</span>
+    <span>
+      <b>vicusbass</b><span class="brand-extra">@vasile <span style="color:var(--term-accent)">~$</span> portfolio</span>
+    </span>
   </div>
   <nav class="nav">
     {items.map(it => (
-      <a href={it.href} data-active={active === it.id}>{it.label}</a>
+      <a href={it.href} data-active={active === it.id} aria-current={active === it.id ? 'page' : undefined}>{it.label}</a>
     ))}
   </nav>
+  <button type="button" class="term-menu-btn" aria-label="Open navigation menu" aria-haspopup="dialog">
+    <span class="term-menu-icon" aria-hidden="true">[ ≡ ]</span>
+    <span class="term-menu-label">menu</span>
+  </button>
   <div class="clock" id="term-clock">--:--:--</div>
 </header>
+
+<dialog class="term-menu-dlg" aria-label="Site navigation">
+  <div class="term-menu-hd">
+    <span class="term-menu-path">~/menu</span>
+    <button type="button" class="term-menu-close" aria-label="Close navigation menu">[ X ]</button>
+  </div>
+  <ul class="term-menu-list">
+    {items.map(it => (
+      <li>
+        <a
+          class="term-menu-item"
+          href={it.href}
+          data-active={active === it.id}
+          aria-current={active === it.id ? 'page' : undefined}
+        >
+          <span class="term-menu-prompt" aria-hidden="true">$</span>
+          <span class="term-menu-cmd">{it.cmd}</span>
+          <span class="term-menu-arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="term-menu-foot">press <b>ESC</b> to close_<span class="boot-caret"></span></div>
+</dialog>
 
 <script>
   const clock = document.getElementById('term-clock');
@@ -43,4 +73,15 @@ const items = [
     tick();
     setInterval(tick, 1000);
   }
+
+  const dlg = document.querySelector<HTMLDialogElement>('.term-menu-dlg');
+  const openBtn = document.querySelector<HTMLButtonElement>('.term-menu-btn');
+  const closeBtn = document.querySelector<HTMLButtonElement>('.term-menu-close');
+
+  openBtn?.addEventListener('click', () => dlg?.showModal());
+  closeBtn?.addEventListener('click', () => dlg?.close());
+
+  dlg?.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close();
+  });
 </script>

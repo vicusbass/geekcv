@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Boot from '../components/Boot.astro';
 import CRTLayers from '../components/CRTLayers.astro';
 import TermTop from '../components/TermTop.astro';
 import TermFoot from '../components/TermFoot.astro';
@@ -97,6 +98,8 @@ const fullTitle = title.includes('Vasile Pop') || title.includes('vicusbass')
       <slot />
     </main>
     <TermFoot />
+
+    <Boot />
 
     <script>
       import { formatUptime } from '../lib/uptime';

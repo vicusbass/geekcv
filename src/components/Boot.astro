@@ -1,0 +1,127 @@
+---
+// Boot sequence overlay. Cosmetic only — markup is JS-injected so SSR HTML
+// stays clean for crawlers, OG scrapers, and reader-mode tools. Runs once
+// per browser session, gated by sessionStorage.
+---
+
+<script is:inline>
+  (() => {
+    const KEY = 'vicusbass:booted';
+
+    let params;
+    try {
+      params = new URLSearchParams(location.search);
+    } catch {
+      params = new URLSearchParams();
+    }
+
+    const reducedMotion =
+      typeof matchMedia === 'function' &&
+      matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (
+      sessionStorage.getItem(KEY) === '1' ||
+      params.has('noboot') ||
+      navigator.webdriver ||
+      reducedMotion
+    ) {
+      sessionStorage.setItem(KEY, '1');
+      return;
+    }
+
+    const ASCII = [
+      '██╗   ██╗██╗ ██████╗██╗   ██╗███████╗██████╗  █████╗ ███████╗███████╗',
+      '██║   ██║██║██╔════╝██║   ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝',
+      '██║   ██║██║██║     ██║   ██║███████╗██████╔╝███████║███████╗███████╗',
+      '╚██╗ ██╔╝██║██║     ██║   ██║╚════██║██╔══██╗██╔══██║╚════██║╚════██║',
+      ' ╚████╔╝ ██║╚██████╗╚██████╔╝███████║██████╔╝██║  ██║███████║███████║',
+      '  ╚═══╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝',
+      '                                              v2.6.0  ·  cluj-napoca',
+    ].join('\n');
+
+    const seq = [
+      ['BIOS ', 'AMI v4.51PG · 64MB RAM detected'],
+      ['CPU  ', 'identifying processor................. vasile@vicusbass'],
+      ['MEM  ', 'training memory channels.............. 21y of experience'],
+      ['NET  ', 'eth0 link up · 1000Mbit/s · cluj-napoca.ro'],
+      ['FS   ', 'mounting /home/projects ..............'],
+      ['FS   ', 'mounting /home/cv ....................'],
+      ['SDET ', 'loading test framework Playwright/pytest'],
+      ['MUSIC', 'detecting bass guitar.................'],
+      ['SVC  ', 'startup complete · 0 critical errors'],
+    ];
+
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    };
+
+    const overlay = el('div', 'boot');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('role', 'presentation');
+
+    const ascii = el('pre', 'boot-ascii', ASCII);
+    const linesEl = el('div', 'boot-lines');
+
+    const skipEl = el('div', 'boot-skip');
+    skipEl.append(
+      'PRESS ',
+      el('b', null, 'SPACE'),
+      ' TO SKIP_',
+      el('span', 'boot-caret'),
+    );
+
+    overlay.append(ascii, linesEl, skipEl);
+
+    let i = 0;
+    let killed = false;
+
+    const tick = () => {
+      if (killed || i >= seq.length) return finish();
+      const [tag, msg] = seq[i++];
+      const row = el('div', 'boot-line');
+      const left = el('span');
+      left.append(el('span', 'boot-tag', '[' + tag + ']'), ' ' + msg);
+      const right = el('span', 'boot-ok', '[ OK ]');
+      row.append(left, right);
+      linesEl.appendChild(row);
+      setTimeout(tick, 160 + Math.random() * 120);
+    };
+
+    const onKey = (e) => {
+      if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+        e.preventDefault();
+        kill();
+      }
+    };
+    const onClick = () => kill();
+
+    const kill = () => {
+      if (killed) return;
+      killed = true;
+      finish();
+    };
+
+    const finish = () => {
+      document.removeEventListener('keydown', onKey);
+      overlay.removeEventListener('click', onClick);
+      overlay.classList.add('boot-exit');
+      setTimeout(() => {
+        overlay.remove();
+        sessionStorage.setItem(KEY, '1');
+      }, 360);
+    };
+
+    const mount = () => {
+      document.body.appendChild(overlay);
+      document.addEventListener('keydown', onKey);
+      overlay.addEventListener('click', onClick);
+      setTimeout(tick, 380);
+    };
+
+    if (document.body) mount();
+    else document.addEventListener('DOMContentLoaded', mount, { once: true });
+  })();
+</script>
