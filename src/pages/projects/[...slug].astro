@@ -22,7 +22,7 @@ const ogShot = src
   ? await getImage({ src, width: 1200, height: 630, format: 'png', quality: 85, fit: 'inside' })
   : null;
 
-const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
 const url = `${SITE}/projects/${project.id}/`;
 
 const description = `${project.data.blurb} Built by Vasile Pop · ${project.data.kind} · ${project.data.year} · ${project.data.stack.join(', ')}.`;

@@ -31,7 +31,7 @@ const {
   tags,
 } = Astro.props;
 
-const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://vicusbass.com';
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
 const canonical = canonicalProp ?? new URL(Astro.url.pathname, SITE).toString();
 const ogImageAbs = ogImage
   ? ogImage.startsWith('http')
