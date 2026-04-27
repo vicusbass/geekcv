@@ -8,18 +8,24 @@ const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.order - b.data.order
 );
 
-// Pre-resolve optimized screenshots so the browser swap is instant.
+// Pre-resolve optimized screenshots. Multiple widths so phones don't fetch
+// the full desktop image — browser picks closest match via srcset.
 const shots = await Promise.all(
   projects.map(async (p) => {
     const src = getAsset(p.data.shot);
     if (!src) return null;
     const img = await getImage({
       src,
-      width: 960,
+      widths: [480, 720, 960],
       format: 'webp',
       quality: 82,
     });
-    return { src: img.src, width: img.attributes.width, height: img.attributes.height };
+    return {
+      src: img.src,
+      srcset: img.srcSet.attribute,
+      width: img.attributes.width,
+      height: img.attributes.height,
+    };
   })
 );
 
@@ -73,7 +79,7 @@ const totalPad = total.toString().padStart(2, '0');
           class="work-view page-enter"
           data-view
           data-index={i}
-          hidden={i !== 0}
+          data-active={i === 0}
         >
           <div class="view-hd">
             <div class="dots"><i></i><i></i><i></i></div>
@@ -83,7 +89,15 @@ const totalPad = total.toString().padStart(2, '0');
 
           <div class="shot">
             {shot ? (
-              <img src={shot.src} alt={p.data.title} width={shot.width} height={shot.height} loading={i === 0 ? 'eager' : 'lazy'} />
+              <img
+                src={shot.src}
+                srcset={shot.srcset}
+                sizes="(max-width: 1100px) 92vw, 880px"
+                alt={p.data.title}
+                width={shot.width}
+                height={shot.height}
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
             ) : (
               <div class="shot-fb">
                 <pre>{p.data.asciiFallback ?? p.data.title}</pre>
@@ -147,7 +161,7 @@ const totalPad = total.toString().padStart(2, '0');
       });
       views.forEach((view, i) => {
         const active = i === idx;
-        view.hidden = !active;
+        view.dataset.active = String(active);
         if (active) {
           view.classList.remove('page-enter');
           // restart glitch transition

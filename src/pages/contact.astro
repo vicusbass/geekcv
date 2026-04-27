@@ -30,21 +30,41 @@ const LOCATION = 'Cluj-Napoca, RO';
       <span class="k">From:</span>
       <input
         type="text"
-        name="from"
-        placeholder="your name <your@email>"
+        name="name"
+        placeholder="your name"
         required
+        maxlength="120"
         autocomplete="name"
       />
+      <span class="k">Email:</span>
+      <input
+        type="email"
+        name="email"
+        placeholder="your@email"
+        required
+        maxlength="254"
+        autocomplete="email"
+      />
       <span class="k">Subject:</span>
-      <input type="text" name="subject" placeholder="re: that thing" />
+      <input type="text" name="subject" maxlength="200" placeholder="re: that thing" />
     </div>
     <div class="compose-body">
       <textarea
         name="body"
         rows="12"
+        required
+        maxlength="5000"
         placeholder={`hi vasile,\n\ntell me about a stack you'd like help with…\n\nI usually reply within a working day.`}
       ></textarea>
     </div>
+    <input
+      type="text"
+      name="company"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+      class="hp"
+    />
     <div class="compose-actions">
       <span><kbd>:wq</kbd> = send · <kbd>⌘↵</kbd> = send · <kbd>:q!</kbd> = abandon draft</span>
       <button type="submit" class="btn btn-prim">$ :wq → send →</button>
@@ -78,39 +98,85 @@ const LOCATION = 'Cluj-Napoca, RO';
   </pre>
 
   <div class="sent" data-sent hidden>
-    <div class="ok">
+    <div class="ok" data-sent-ok hidden>
       <pre>{`✓ ─────────────────────────────
-  message queued · opening mailto://
-  ${EMAIL}
+  message sent · vasile will reply
+  within ~24h
   ─────────────────────────────`}</pre>
-      <div>opening your mail client...</div>
+      <div>thanks — close this and carry on.</div>
+    </div>
+    <div class="ok err" data-sent-err hidden>
+      <pre>{`✗ ─────────────────────────────
+  couldn't send · try mailing
+  contact@vicusbass.com directly
+  ─────────────────────────────`}</pre>
+      <div>
+        <a href={`mailto:${EMAIL}`}>open mail client →</a>
+      </div>
     </div>
   </div>
 </Terminal>
 
-<script is:inline define:vars={{ EMAIL }}>
+<script is:inline>
   const form = document.querySelector('[data-compose]');
   const sent = document.querySelector('[data-sent]');
+  const okBox = document.querySelector('[data-sent-ok]');
+  const errBox = document.querySelector('[data-sent-err]');
+  const submitBtn = form?.querySelector('button[type="submit"]');
 
-  if (form && sent) {
-    const send = (e) => {
-      e?.preventDefault?.();
-      const fd = new FormData(form);
-      const from = (fd.get('from') ?? '').toString().trim();
-      const subject = (fd.get('subject') ?? '').toString().trim();
-      const body = (fd.get('body') ?? '').toString();
+  if (form && sent && okBox && errBox && submitBtn) {
+    let inFlight = false;
 
-      const url = `mailto:${EMAIL}?subject=${encodeURIComponent(
-        subject || 'hello',
-      )}&body=${encodeURIComponent(`${body}\n\n— ${from || 'someone'}`)}`;
-
+    const showResult = (ok) => {
+      okBox.hidden = !ok;
+      errBox.hidden = ok;
       sent.hidden = false;
-      window.setTimeout(() => {
-        window.location.href = url;
+      if (ok) {
         window.setTimeout(() => {
           sent.hidden = true;
-        }, 2000);
-      }, 1100);
+          okBox.hidden = true;
+        }, 3000);
+      }
+    };
+
+    const send = async (e) => {
+      e?.preventDefault?.();
+      if (inFlight) return;
+
+      const fd = new FormData(form);
+      const payload = {
+        name: (fd.get('name') ?? '').toString().trim(),
+        email: (fd.get('email') ?? '').toString().trim(),
+        subject: (fd.get('subject') ?? '').toString().trim(),
+        body: (fd.get('body') ?? '').toString(),
+        company: (fd.get('company') ?? '').toString(),
+      };
+
+      inFlight = true;
+      submitBtn.disabled = true;
+      const originalLabel = submitBtn.textContent;
+      submitBtn.textContent = '$ sending…';
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (res.ok && data.ok) {
+          form.reset();
+          showResult(true);
+        } else {
+          showResult(false);
+        }
+      } catch {
+        showResult(false);
+      } finally {
+        inFlight = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
     };
 
     form.addEventListener('submit', send);
@@ -119,6 +185,12 @@ const LOCATION = 'Cluj-Napoca, RO';
         e.preventDefault();
         send();
       }
+    });
+
+    sent.addEventListener('click', () => {
+      sent.hidden = true;
+      okBox.hidden = true;
+      errBox.hidden = true;
     });
   }
 </script>
@@ -311,6 +383,26 @@ const LOCATION = 'Cluj-Napoca, RO';
     padding: 32px 48px;
     text-align: center;
     box-shadow: 0 0 40px rgba(var(--term-accent-rgb), 0.3);
+  }
+  .sent .ok.err {
+    border-color: var(--term-error);
+    color: var(--term-error);
+    box-shadow: 0 0 40px rgba(255, 80, 80, 0.25);
+  }
+  .sent .ok.err pre {
+    color: var(--term-error);
+    text-shadow: 0 0 8px rgba(255, 80, 80, 0.4);
+  }
+  .sent .ok.err a {
+    color: var(--term-error);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
   .sent pre {
     color: var(--term-accent);
