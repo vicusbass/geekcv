@@ -193,6 +193,14 @@ const skillGroups = [
   .rf-cv-prose :global(li::marker) {
     color: var(--accent);
   }
+  .rf-cv-prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .rf-cv-prose :global(a:hover) {
+    text-decoration: none;
+  }
 
   .rf-cv-rail {
     position: sticky;

@@ -3,6 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import rehypeExternalLinks from 'rehype-external-links';
 
 const SITE = 'https://www.vicusbass.com';
 
@@ -16,6 +17,10 @@ const blogPages = readdirSync('./src/content/blog')
 export default defineConfig({
   site: SITE,
   adapter: vercel(),
+  markdown: {
+    // Open external links in a new tab with a safe rel attribute.
+    rehypePlugins: [[rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]],
+  },
   integrations: [
     sitemap({
       // The five top-level routes render on demand (cookie-based theme), so the

@@ -16,6 +16,7 @@
     "@astrojs/vercel": "^10.0.5",
     "@tailwindcss/vite": "^4.1.0",
     "astro": "^6.1.9",
+    "rehype-external-links": "^3.0.0",
     "resend": "^6.12.2",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.0",
