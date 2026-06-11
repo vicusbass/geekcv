@@ -1,0 +1,297 @@
+---
+import Head from './Head.astro';
+import { HOME_TITLE, HOME_DESCRIPTION, buildHomeJsonLd } from '../lib/seo';
+
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
+const jsonLd = buildHomeJsonLd(SITE);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head title={HOME_TITLE} description={HOME_DESCRIPTION} jsonLd={jsonLd} />
+    <meta name="theme-color" content="#0d0d0f" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+    />
+  </head>
+  <body>
+    <main class="gate">
+      <div class="gate-glow" aria-hidden="true"></div>
+
+      <div class="gate-intro">
+        <div class="gate-eyebrow">vicusbass.com</div>
+        <h1 class="gate-h1">Same engineer. Two very<br />different rooms.</h1>
+        <p class="gate-sub">
+          Choose how you'd like to meet me — the terminal, or the suit. The work
+          underneath is exactly the same.
+        </p>
+      </div>
+
+      <div class="gate-cards">
+        <!-- geek card -->
+        <button type="button" class="gate-card gate-card-geek" data-pick="geek">
+          <div class="gate-geek-bar">
+            <span class="gate-dots">
+              <i style="background:#ff6b6b"></i><i style="background:#ffd93d"></i><i style="background:#5fff9c"></i>
+            </span>
+            <span>~/vicusbass — zsh</span>
+          </div>
+          <div class="gate-geek-cmd">$ ./geek_mode</div>
+          <div class="gate-geek-desc">
+            Plays bass, breaks builds on purpose, enjoys it far too much.
+          </div>
+          <div class="gate-geek-enter">
+            enter terminal <span>→</span><span class="gate-caret"></span>
+          </div>
+        </button>
+
+        <!-- refined card -->
+        <button type="button" class="gate-card gate-card-refined" data-pick="refined">
+          <div class="gate-ref-eyebrow">Portfolio · est. 2002</div>
+          <div class="gate-ref-title">The serious me</div>
+          <div class="gate-ref-desc">
+            Ships on time, writes the strategy, sweats the details.
+          </div>
+          <div class="gate-ref-enter">view portfolio <span>→</span></div>
+        </button>
+      </div>
+
+      <div class="gate-note">You can switch between the two anytime.</div>
+    </main>
+
+    <script>
+      const pick = (theme: string) => {
+        document.cookie = `vp-theme=${theme};path=/;max-age=31536000;samesite=lax`;
+        try {
+          localStorage.setItem('vp-theme', theme);
+        } catch {}
+        location.href = '/';
+      };
+      for (const el of document.querySelectorAll<HTMLElement>('[data-pick]')) {
+        el.addEventListener('click', () => pick(el.dataset.pick ?? 'refined'));
+      }
+    </script>
+
+    <style is:global>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-family: "Hanken Grotesk", system-ui, sans-serif;
+      }
+      @keyframes vp-fade {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes vp-blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      .gate {
+        min-height: 100vh;
+        background: #0d0d0f;
+        color: #fff;
+        /* Set explicitly: the page also pulls in global.css (geek theme) via the
+           statically-imported layouts, whose unscoped html/body font rule would
+           otherwise win and render the gate in monospace. */
+        font-family: "Hanken Grotesk", system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .gate-glow {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 28% 35%, rgba(95, 255, 156, 0.06), transparent 45%),
+          radial-gradient(ellipse at 74% 68%, rgba(34, 197, 94, 0.08), transparent 48%);
+      }
+
+      .gate-intro {
+        position: relative;
+        text-align: center;
+        max-width: 680px;
+        animation: vp-fade 0.6s ease both;
+      }
+      .gate-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.42);
+        font-weight: 600;
+      }
+      .gate-h1 {
+        font-weight: 800;
+        font-size: clamp(30px, 4.8vw, 48px);
+        line-height: 1.08;
+        margin: 22px 0 0;
+        letter-spacing: -0.035em;
+      }
+      .gate-sub {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 15.5px;
+        line-height: 1.6;
+        max-width: 46ch;
+        margin: 18px auto 0;
+      }
+
+      .gate-cards {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        width: 100%;
+        max-width: 760px;
+        margin-top: 44px;
+        animation: vp-fade 0.7s ease 0.08s both;
+      }
+      .gate-card {
+        cursor: pointer;
+        text-align: left;
+        border-radius: 10px;
+        padding: 26px 24px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-height: 230px;
+        font: inherit;
+      }
+      .gate-card-geek {
+        border: 1px solid rgba(95, 255, 156, 0.28);
+        background: linear-gradient(180deg, #06080a, #0a0e10);
+        color: #cde2d8;
+        font-family: "JetBrains Mono", monospace;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s;
+      }
+      .gate-card-geek:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 50px -24px rgba(95, 255, 156, 0.32);
+        border-color: rgba(95, 255, 156, 0.6);
+      }
+      .gate-geek-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        color: #7dd3a8;
+        letter-spacing: 0.04em;
+      }
+      .gate-dots {
+        display: flex;
+        gap: 5px;
+      }
+      .gate-dots i {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .gate-geek-cmd {
+        font-family: "Space Mono", monospace;
+        font-size: 25px;
+        color: #5fff9c;
+        text-shadow: 0 0 14px rgba(95, 255, 156, 0.4);
+        letter-spacing: -0.01em;
+        margin-top: 6px;
+      }
+      .gate-geek-desc {
+        font-size: 12.5px;
+        line-height: 1.6;
+        color: #7dd3a8;
+      }
+      .gate-geek-enter {
+        margin-top: auto;
+        font-size: 12px;
+        color: #5fff9c;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .gate-caret {
+        width: 7px;
+        height: 14px;
+        background: #5fff9c;
+        display: inline-block;
+        animation: vp-blink 1s steps(2) infinite;
+      }
+      .gate-card-refined {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        color: #0c0c0d;
+        font-family: "Hanken Grotesk", sans-serif;
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+      }
+      .gate-card-refined:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 50px -22px rgba(0, 0, 0, 0.5);
+      }
+      .gate-ref-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #22c55e;
+        font-weight: 700;
+      }
+      .gate-ref-title {
+        font-weight: 800;
+        font-size: 30px;
+        letter-spacing: -0.035em;
+        margin-top: 6px;
+      }
+      .gate-ref-desc {
+        font-size: 12.5px;
+        line-height: 1.6;
+        color: #73757c;
+      }
+      .gate-ref-enter {
+        margin-top: auto;
+        font-size: 13px;
+        color: #22c55e;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .gate-note {
+        position: relative;
+        margin-top: 34px;
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      @media (max-width: 640px) {
+        .gate-cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>

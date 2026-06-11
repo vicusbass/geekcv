@@ -191,8 +191,32 @@ a {
   background: rgba(var(--term-accent-rgb), 0.06);
   opacity: 1;
 }
-.term-top .clock {
+.term-top-end {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   justify-self: end;
+}
+.term-switch {
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  background: rgba(var(--term-accent-rgb), 0.08);
+  border: 1px solid var(--term-line-strong);
+  color: var(--term-accent);
+  padding: 6px 12px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.term-switch:hover,
+.term-switch:focus-visible {
+  background: var(--term-accent);
+  color: var(--term-bg);
+  outline: none;
+}
+.term-top .clock {
   color: var(--term-dim);
   font-variant-numeric: tabular-nums;
   font-size: 13px;
@@ -344,12 +368,14 @@ a {
 /* ─── Top bar mobile breakpoints ─── */
 @media (max-width: 760px) {
   .term-top {
-    grid-template-columns: 1fr auto auto;
     gap: 12px;
     padding: 10px 16px;
   }
   .term-top .nav {
     display: none;
+  }
+  .term-top-end {
+    gap: 12px;
   }
   .term-menu-btn {
     display: inline-flex;
@@ -359,9 +385,6 @@ a {
   }
 }
 @media (max-width: 480px) {
-  .term-top {
-    grid-template-columns: 1fr auto;
-  }
   .term-top .clock {
     display: none;
   }
@@ -955,4 +978,350 @@ a {
   .view-bd h3 {
     font-size: 22px;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   REFINED (SWISS) THEME
+   A second presentation of the same site. Activated by `data-theme="refined"`
+   on <html>. Tokens are scoped so they never collide with the geek `--term-*`
+   set, and the chrome classes use an `.rf-`/`.r-` prefix the geek theme never
+   touches.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[data-theme="refined"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --fg: #0c0c0d; /* near-black text */
+  --muted: #73757c; /* secondary text */
+  --line: rgba(12, 12, 13, 0.15); /* hairline rules / borders */
+  --accent: #22c55e; /* the one decisive colour — a fresh, light green */
+  --accent-soft: rgba(34, 197, 94, 0.08);
+  --on-accent: #ffffff;
+
+  --display: "Hanken Grotesk", system-ui, sans-serif;
+  --body: "Hanken Grotesk", system-ui, sans-serif;
+  --radius: 0px; /* Swiss = no rounding (pills are the exception) */
+  --tag-bg: transparent;
+  --tag-fg: #0c0c0d;
+
+  --kicker-ls: 0.14em;
+  --kicker-tt: uppercase;
+  --shadow: 0 18px 44px -30px rgba(12, 12, 13, 0.45);
+  --h-weight: 800;
+  --h-ls: -0.035em;
+}
+
+/* Override the geek base styles for the refined document only. */
+html[data-theme="refined"],
+html[data-theme="refined"] body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+html[data-theme="refined"] a {
+  color: inherit;
+}
+html[data-theme="refined"] ::selection {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+}
+
+@keyframes vp-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes vp-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ─── Refined chrome: shared container ─── */
+.rf-shell {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 40px;
+}
+@media (max-width: 640px) {
+  .rf-shell {
+    padding-inline: 18px;
+  }
+}
+
+/* ─── Utility strip ─── */
+.rf-utility {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.rf-util {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 9px;
+  font-size: 11.5px;
+}
+.rf-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.rf-status .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1f8a4c;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  animation: vp-pulse 2.4s ease-in-out infinite;
+}
+@media (max-width: 640px) {
+  .rf-util {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 14px;
+  }
+}
+
+/* ─── Switch-theme buttons (utility strip + footer) ─── */
+.rf-switch {
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 5px 12px;
+  border-radius: var(--radius);
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.rf-switch:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.rf-switch-foot {
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.rf-switch-foot:hover {
+  color: var(--accent);
+}
+
+/* ─── Header ─── */
+.rf-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.rf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 16px;
+}
+.rf-brand {
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+}
+.rf-monogram {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.04em;
+  flex: none;
+}
+.rf-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.rf-brand-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--fg);
+  letter-spacing: -0.03em;
+}
+.rf-brand-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.rf-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.rf-navlink {
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  opacity: 0.55;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+.rf-navlink:hover {
+  opacity: 1;
+}
+.rf-navlink[aria-current="page"] {
+  opacity: 1;
+  border-bottom-color: var(--accent);
+}
+@media (max-width: 640px) {
+  .rf-head {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .rf-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+}
+
+/* ─── Main + footer ─── */
+.rf-main {
+  padding-block: 0 96px;
+}
+.rf-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.rf-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-block: 36px;
+}
+.rf-foot-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rf-foot-mono {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: -0.04em;
+}
+.rf-foot-copy {
+  font-size: 13px;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .rf-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
+
+/* ─── Shared refined primitives ─── */
+.rf-kicker {
+  font-size: 12px;
+  letter-spacing: var(--kicker-ls);
+  text-transform: var(--kicker-tt);
+  color: var(--accent);
+  font-weight: 700;
+}
+.rf-pill {
+  font-size: 11px;
+  color: var(--tag-fg);
+  background: var(--tag-bg);
+  border: 1px solid var(--line);
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+.rf-btn {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.rf-btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--accent);
+}
+.rf-btn-primary:hover {
+  opacity: 0.88;
+}
+.rf-btn-ghost {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+.rf-btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.rf-textlink {
+  background: transparent;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.rf-textlink:hover {
+  opacity: 0.7;
 }
