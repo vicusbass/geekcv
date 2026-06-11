@@ -1,0 +1,128 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const fmtDate = (d: Date) => {
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  return `${month} ${d.getFullYear()}`;
+};
+---
+
+<div class="rf-page">
+  <section class="rf-header-sec">
+    <div class="rf-kicker">Writing</div>
+    <h1 class="rf-h1">Notes &amp; opinions</h1>
+    <p class="rf-intro">
+      On test tooling, automation strategy, and the occasional Python trick.
+      Opinions are my own, loosely held.
+    </p>
+  </section>
+
+  <section class="rf-posts">
+    {posts.map((post) => (
+      <a class="rf-blogrow" href={`/blog/${post.id}/`}>
+        <div class="rf-blog-date">{fmtDate(post.data.pubDate)}</div>
+        <div>
+          <h3 class="rf-blog-title">{post.data.title}</h3>
+          <p class="rf-blog-desc">{post.data.description}</p>
+          {post.data.tags.length > 0 && (
+            <div class="rf-blog-tags">
+              {post.data.tags.map((t) => <span class="rf-pill">{t}</span>)}
+            </div>
+          )}
+        </div>
+        <div class="rf-blog-read">Read →</div>
+      </a>
+    ))}
+  </section>
+</div>
+
+<style>
+  .rf-page {
+    animation: vp-fade 0.5s ease both;
+  }
+  .rf-header-sec {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .rf-h1 {
+    font-family: var(--display);
+    font-weight: var(--h-weight);
+    font-size: clamp(34px, 4.6vw, 54px);
+    color: var(--fg);
+    margin: 16px 0 0;
+    letter-spacing: var(--h-ls);
+  }
+  .rf-intro {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 56ch;
+    margin: 16px 0 0;
+  }
+
+  .rf-posts {
+    padding-top: 20px;
+  }
+  .rf-blogrow {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 28px;
+    align-items: baseline;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+    transition: opacity 0.2s;
+  }
+  .rf-blogrow:hover {
+    opacity: 0.62;
+  }
+  .rf-blog-date {
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    padding-top: 4px;
+  }
+  .rf-blog-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--fg);
+    margin: 0;
+    letter-spacing: var(--h-ls);
+    line-height: 1.2;
+  }
+  .rf-blog-desc {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 9px 0 0;
+  }
+  .rf-blog-tags {
+    display: flex;
+    gap: 7px;
+    margin-top: 13px;
+    flex-wrap: wrap;
+  }
+  .rf-blog-read {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    white-space: nowrap;
+    padding-top: 6px;
+  }
+
+  @media (max-width: 640px) {
+    .rf-blogrow {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .rf-blog-read {
+      padding-top: 0;
+    }
+  }
+</style>

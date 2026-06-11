@@ -1,0 +1,148 @@
+---
+import '../styles/global.css';
+import Head from '../components/Head.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+  ogImage?: string | null;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  ogType?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+  canonical?: string;
+  publishedTime?: string;
+  tags?: string[];
+}
+
+const {
+  title,
+  description,
+  active,
+  ogImage,
+  ogImageWidth,
+  ogImageHeight,
+  ogType,
+  noindex,
+  jsonLd,
+  canonical,
+  publishedTime,
+  tags,
+} = Astro.props;
+
+const nav = [
+  { id: 'home', href: '/', label: 'Home' },
+  { id: 'work', href: '/projects', label: 'Work' },
+  { id: 'cv', href: '/cv', label: 'CV' },
+  { id: 'blog', href: '/blog', label: 'Writing' },
+  { id: 'contact', href: '/contact', label: 'Contact' },
+] as const;
+---
+
+<!doctype html>
+<html lang="en" data-theme="refined">
+  <head>
+    <Head
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      ogImageWidth={ogImageWidth}
+      ogImageHeight={ogImageHeight}
+      ogType={ogType}
+      noindex={noindex}
+      jsonLd={jsonLd}
+      canonical={canonical}
+      publishedTime={publishedTime}
+      tags={tags}
+    />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
+  </head>
+  <body>
+    <!-- utility strip -->
+    <div class="rf-utility">
+      <div class="rf-shell rf-util">
+        <div class="rf-status">
+          <span class="dot"></span>
+          Open for consulting · 2026
+        </div>
+        <button type="button" class="rf-switch" data-switch-geek>⌘ Geek view ↗</button>
+      </div>
+    </div>
+
+    <!-- header -->
+    <header class="rf-header">
+      <div class="rf-shell rf-head">
+        <a href="/" class="rf-brand">
+          <span class="rf-monogram">VP</span>
+          <span class="rf-brand-text">
+            <span class="rf-brand-name">Vasile Pop</span>
+            <span class="rf-brand-sub">SDET · Web Development</span>
+          </span>
+        </a>
+        <nav class="rf-nav">
+          {nav.map((it) => (
+            <a
+              href={it.href}
+              class="rf-navlink"
+              aria-current={active === it.id ? 'page' : undefined}
+            >{it.label}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main class="rf-shell rf-main">
+      <slot />
+    </main>
+
+    <!-- footer -->
+    <footer class="rf-footer">
+      <div class="rf-shell rf-foot">
+        <div class="rf-foot-brand">
+          <span class="rf-foot-mono">VP</span>
+          <span class="rf-foot-copy">© 2026 Vasile Pop · Cluj-Napoca</span>
+        </div>
+        <button type="button" class="rf-switch-foot" data-switch-geek>
+          Prefer the terminal? Switch to geek view ↗
+        </button>
+      </div>
+    </footer>
+
+    <script>
+      // Flip to the geek presentation and reload the current path (both themes
+      // share routes, so the visitor stays on the equivalent page).
+      const toGeek = () => {
+        document.cookie = 'vp-theme=geek;path=/;max-age=31536000;samesite=lax';
+        try {
+          localStorage.setItem('vp-theme', 'geek');
+        } catch {}
+        location.reload();
+      };
+      for (const el of document.querySelectorAll('[data-switch-geek]')) {
+        el.addEventListener('click', toGeek);
+      }
+    </script>
+  </body>
+</html>

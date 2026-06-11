@@ -1,0 +1,417 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import { getAsset } from '../../lib/assets';
+
+const featured = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const thumbs = await Promise.all(
+  featured.map(async (p) => {
+    const src = getAsset(p.data.shot);
+    if (!src) return null;
+    const img = await getImage({ src, widths: [480, 720], format: 'webp', quality: 82 });
+    return { src: img.src, srcset: img.srcSet.attribute };
+  }),
+);
+
+const portraitSrc = getAsset('profile.png');
+const portrait = portraitSrc
+  ? await getImage({ src: portraitSrc, width: 720, format: 'webp', quality: 85 })
+  : null;
+
+const stats: Array<[string, string]> = [
+  ['21+', 'years shipping'],
+  ['12', 'teams & companies'],
+  ['∞', 'flaky tests retired'],
+];
+
+const clients = ['Distribusion', 'ComplyAdvantage', 'Hopin', 'LeadIQ', 'Intel', 'Zartis'];
+
+const capabilities = [
+  {
+    no: '01',
+    title: 'Test strategy & automation',
+    body: 'End-to-end strategy, framework setup, and automation in Python & TypeScript — Playwright, pytest, the works.',
+  },
+  {
+    no: '02',
+    title: 'Performance & load',
+    body: 'k6.io benchmarking and soak tests that tell you where things break before your users find out.',
+  },
+  {
+    no: '03',
+    title: 'Web development',
+    body: 'Production sites and apps in Astro and Next.js — design-minded, fast, and maintainable.',
+  },
+];
+---
+
+<div class="rf-page">
+  <!-- hero -->
+  <section class="rf-hero">
+    <div>
+      <div class="rf-kicker">SDET · Web Development · Consulting</div>
+      <h1 class="rf-hero-h1">Tests that fail loudly. Code that ships quietly.</h1>
+      <p class="rf-hero-lead">
+        I'm Vasile Pop — 21+ years of test automation and web development out of
+        Cluj-Napoca, working remote. I design end-to-end test strategies, build
+        automation in Python &amp; TypeScript, and ship production web apps in Astro
+        and Next.js.
+      </p>
+      <div class="rf-hero-cta">
+        <a class="rf-btn rf-btn-primary" href="/projects">View selected work →</a>
+        <a class="rf-btn rf-btn-ghost" href="/cv">Read the CV</a>
+        <a class="rf-btn rf-btn-ghost" href="/contact">Get in touch</a>
+      </div>
+      <div class="rf-hero-stats">
+        {stats.map(([n, label]) => (
+          <div>
+            <div class="rf-stat-n">{n}</div>
+            <div class="rf-stat-l">{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="rf-portrait-wrap">
+      <div class="rf-portrait">
+        {portrait && (
+          <img src={portrait.src} alt="Vasile Pop" loading="eager" />
+        )}
+        <div class="rf-portrait-bar">
+          <div>
+            <div class="rf-portrait-name">Vasile Pop</div>
+            <div class="rf-portrait-loc">Cluj-Napoca, RO · remote</div>
+          </div>
+          <div class="rf-portrait-tag">SDET</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- clients strip -->
+  <section class="rf-clients">
+    <div class="rf-clients-row">
+      <span class="rf-clients-label">Worked with</span>
+      {clients.map((c) => <span class="rf-client">{c}</span>)}
+    </div>
+  </section>
+
+  <!-- selected work -->
+  <section class="rf-work">
+    <div class="rf-work-head">
+      <div>
+        <div class="rf-kicker">Selected work</div>
+        <h2 class="rf-h2">Recent builds</h2>
+      </div>
+      <a class="rf-textlink" href="/projects">All projects →</a>
+    </div>
+    <div class="rf-grid2">
+      {featured.map((p, i) => (
+        <a class="rf-workcard" href={p.data.url} target="_blank" rel="noreferrer">
+          <div class="rf-workcard-shot">
+            {thumbs[i] && (
+              <img src={thumbs[i]!.src} srcset={thumbs[i]!.srcset} sizes="(max-width:760px) 92vw, 520px" alt={p.data.title} loading="lazy" />
+            )}
+          </div>
+          <div class="rf-workcard-body">
+            <div class="rf-workcard-meta">
+              <span class="rf-workcard-kind">{p.data.kind}</span>
+              <span class="rf-workcard-year">{p.data.year}</span>
+            </div>
+            <div class="rf-workcard-title">{p.data.title}</div>
+            <div class="rf-workcard-blurb">{p.data.blurb}</div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- capabilities -->
+  <section class="rf-caps">
+    <div class="rf-kicker">How I help</div>
+    <h2 class="rf-h2 rf-caps-h2">Three things I'm reliably good at</h2>
+    <div class="rf-grid3 rf-caps-grid">
+      {capabilities.map((cap) => (
+        <div class="rf-cap">
+          <div class="rf-cap-no">{cap.no}</div>
+          <div class="rf-cap-title">{cap.title}</div>
+          <div class="rf-cap-body">{cap.body}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+</div>
+
+<style>
+  .rf-page {
+    animation: vp-fade 0.5s ease both;
+  }
+
+  /* hero */
+  .rf-hero {
+    display: grid;
+    grid-template-columns: 1.35fr 0.9fr;
+    gap: 56px;
+    align-items: center;
+    padding: 72px 0 64px;
+  }
+  .rf-hero-h1 {
+    font-family: var(--display);
+    font-weight: var(--h-weight);
+    letter-spacing: var(--h-ls);
+    line-height: 1.02;
+    font-size: clamp(40px, 5.6vw, 64px);
+    color: var(--fg);
+    margin: 22px 0 0;
+  }
+  .rf-hero-lead {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.65;
+    max-width: 52ch;
+    margin: 26px 0 0;
+  }
+  .rf-hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 34px;
+  }
+  .rf-hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin-top: 40px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+  }
+  .rf-stat-n {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 30px;
+    color: var(--fg);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .rf-stat-l {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: 0.03em;
+  }
+
+  /* portrait */
+  .rf-portrait-wrap {
+    position: relative;
+  }
+  .rf-portrait {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .rf-portrait img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+  .rf-portrait-bar {
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+  }
+  .rf-portrait-name {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+  .rf-portrait-loc {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .rf-portrait-tag {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* clients */
+  .rf-clients {
+    padding: 6px 0 8px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .rf-clients-row {
+    display: flex;
+    align-items: center;
+    gap: 10px 22px;
+    flex-wrap: wrap;
+    padding: 18px 0;
+  }
+  .rf-clients-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-right: 6px;
+  }
+  .rf-client {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--fg);
+    opacity: 0.62;
+    letter-spacing: -0.02em;
+  }
+
+  /* selected work */
+  .rf-work {
+    padding: 64px 0 0;
+  }
+  .rf-work-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .rf-h2 {
+    font-family: var(--display);
+    font-weight: var(--h-weight);
+    font-size: clamp(28px, 3.2vw, 38px);
+    color: var(--fg);
+    margin: 10px 0 0;
+    letter-spacing: var(--h-ls);
+  }
+  .rf-grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .rf-workcard {
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .rf-workcard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+  .rf-workcard-shot {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .rf-workcard-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .rf-workcard-body {
+    padding: 18px 20px 20px;
+  }
+  .rf-workcard-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .rf-workcard-kind {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .rf-workcard-year {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .rf-workcard-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--fg);
+    margin-top: 8px;
+    letter-spacing: var(--h-ls);
+  }
+  .rf-workcard-blurb {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-top: 7px;
+  }
+
+  /* capabilities */
+  .rf-caps {
+    padding: 72px 0 0;
+  }
+  .rf-caps-h2 {
+    margin: 10px 0 32px;
+  }
+  .rf-grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .rf-cap {
+    background: var(--surface);
+    padding: 28px 26px;
+  }
+  .rf-cap-no {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .rf-cap-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--fg);
+    margin-top: 14px;
+    letter-spacing: var(--h-ls);
+  }
+  .rf-cap-body {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 980px) {
+    .rf-hero {
+      grid-template-columns: 1fr;
+      gap: 38px;
+      padding-top: 48px;
+    }
+  }
+  @media (max-width: 760px) {
+    .rf-grid2,
+    .rf-grid3 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -26,11 +26,14 @@ const items = [
       <a href={it.href} data-active={active === it.id} aria-current={active === it.id ? 'page' : undefined}>{it.label}</a>
     ))}
   </nav>
-  <button type="button" class="term-menu-btn" aria-label="Open navigation menu" aria-haspopup="dialog">
-    <span class="term-menu-icon" aria-hidden="true">[ ≡ ]</span>
-    <span class="term-menu-label">menu</span>
-  </button>
-  <div class="clock" id="term-clock">--:--:--</div>
+  <div class="term-top-end">
+    <button type="button" class="term-switch" data-switch-refined aria-label="Switch to the refined view">↗ refined view</button>
+    <button type="button" class="term-menu-btn" aria-label="Open navigation menu" aria-haspopup="dialog">
+      <span class="term-menu-icon" aria-hidden="true">[ ≡ ]</span>
+      <span class="term-menu-label">menu</span>
+    </button>
+    <div class="clock" id="term-clock">--:--:--</div>
+  </div>
 </header>
 
 <dialog class="term-menu-dlg" aria-label="Site navigation">
@@ -83,5 +86,14 @@ const items = [
 
   dlg?.addEventListener('click', (e) => {
     if (e.target === dlg) dlg.close();
+  });
+
+  // Switch to the refined presentation and reload the current path.
+  document.querySelector('[data-switch-refined]')?.addEventListener('click', () => {
+    document.cookie = 'vp-theme=refined;path=/;max-age=31536000;samesite=lax';
+    try {
+      localStorage.setItem('vp-theme', 'refined');
+    } catch {}
+    location.reload();
   });
 </script>
