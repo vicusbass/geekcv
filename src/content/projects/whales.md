@@ -7,7 +7,7 @@ url: "https://whales.rocks"
 role: "Solo"
 stack: ["Astro", "MDX"]
 shot: "whale.svg"
-order: 6
+order: 7
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  ≋≋ WHALES.ROCKS ≋≋                │

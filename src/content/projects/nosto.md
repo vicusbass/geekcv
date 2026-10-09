@@ -7,7 +7,7 @@ url: "https://nosto.ro"
 role: "Web dev"
 stack: ["Astro", "Tailwind", "Sanity.io"]
 shot: "nosto.png"
-order: 5
+order: 6
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  ▢ NOSTO · REAL ESTATE             │

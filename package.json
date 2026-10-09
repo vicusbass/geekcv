@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,22 +14,20 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/vercel": "^10.0.5",
-    "@tailwindcss/vite": "^4.1.0",
-    "astro": "^6.1.9",
-    "rehype-external-links": "^3.0.0",
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/markdown-satteri": "^0.4.3",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.13",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.8",
     "resend": "^6.12.2",
+    "satteri": "^0.10.5",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.1.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.7.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "lefthook": "^1.8.0"
-  },
-  "overrides": {
-    "vite": "^7"
   }
 }
