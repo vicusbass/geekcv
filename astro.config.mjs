@@ -1,9 +1,10 @@
 import { readdirSync } from 'node:fs';
+import { satteri } from '@astrojs/markdown-satteri';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
-import rehypeExternalLinks from 'rehype-external-links';
+import { externalLinks } from './src/lib/external-links';
 
 const SITE = 'https://www.vicusbass.com';
 
@@ -17,9 +18,17 @@ const blogPages = readdirSync('./src/content/blog')
 export default defineConfig({
   site: SITE,
   adapter: vercel(),
+  // Astro 7 defaults to 'jsx', which drops whitespace between inline elements
+  // ("$ cd /work" → "$cd /work"). The templates rely on HTML whitespace rules.
+  compressHTML: true,
+  image: {
+    // Rasterize SVG project shots (whale.svg) to webp/png like Astro 6 did; the
+    // OG card needs a PNG. Safe here: every source lives in src/assets.
+    dangerouslyProcessSVG: true,
+  },
   markdown: {
     // Open external links in a new tab with a safe rel attribute.
-    rehypePlugins: [[rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]],
+    processor: satteri({ hastPlugins: [externalLinks] }),
   },
   integrations: [
     sitemap({

@@ -7,5 +7,5 @@ url: "https://www.nextaz.ro/"
 role: "Web dev"
 stack: ["Astro", "Tailwind", "Sanity.io"]
 shot: "nextaz.webp"
-order: 2
+order: 3
 ---
