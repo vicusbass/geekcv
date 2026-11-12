@@ -9,7 +9,7 @@ import TermFoot from '../components/TermFoot.astro';
 interface Props {
   title: string;
   description?: string;
-  active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+  active?: 'home' | 'services' | 'work' | 'cv' | 'blog' | 'contact';
   /** Pass `null` to opt out of the default social card. */
   ogImage?: string | null;
   /** Pixel dimensions of `ogImage`. Defaults match `/og-default.png` (1200×630). */
@@ -21,6 +21,8 @@ interface Props {
   canonical?: string;
   publishedTime?: string;
   tags?: string[];
+  lang?: 'en' | 'ro';
+  alternates?: Array<{ hreflang: string; href: string }>;
 }
 
 const {
@@ -36,11 +38,13 @@ const {
   canonical,
   publishedTime,
   tags,
+  lang = 'en',
+  alternates,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <Head
       title={title}
@@ -54,6 +58,8 @@ const {
       canonical={canonical}
       publishedTime={publishedTime}
       tags={tags}
+      lang={lang}
+      alternates={alternates}
     />
     <meta name="theme-color" content="#06080a" />
 

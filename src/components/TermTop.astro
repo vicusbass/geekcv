@@ -1,12 +1,13 @@
 ---
 interface Props {
-  active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+  active?: 'home' | 'services' | 'work' | 'cv' | 'blog' | 'contact';
 }
 
 const { active } = Astro.props;
 
 const items = [
   { id: 'home',    href: '/',         label: '/home',    cmd: 'cd ~' },
+  { id: 'services', href: '/services', label: '/services', cmd: 'cd /services' },
   { id: 'work',    href: '/projects', label: '/work',    cmd: 'cd /work' },
   { id: 'cv',      href: '/cv',       label: '/cv',      cmd: 'cd /cv' },
   { id: 'blog',    href: '/blog',     label: '/blog',    cmd: 'cd /blog' },

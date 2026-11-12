@@ -7,6 +7,10 @@ import { defineConfig } from 'astro/config';
 import { externalLinks } from './src/lib/external-links';
 
 const SITE = 'https://www.vicusbass.com';
+const SERVICES_EN = `${SITE}/services`;
+const SERVICES_RO = `${SITE}/ro/servicii`;
+const TOP_LEVEL_SLASHED =
+  /^https:\/\/www\.vicusbass\.com\/(services|projects|cv|blog|contact|ro\/servicii)\/$/;
 
 // Blog posts render on demand (cookie-based theme), so the sitemap can't
 // auto-discover them from the static build. Derive their URLs from the content
@@ -32,12 +36,27 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      // The five top-level routes render on demand (cookie-based theme), so the
+      // Astro 7 also auto-discovers the on-demand top-level routes, but with a
+      // trailing slash ("/cv/"). Keep only the slashless canonical versions below.
+      filter: (page) => !TOP_LEVEL_SLASHED.test(page),
+      // /services and /ro/servicii are translations of each other.
+      serialize(item) {
+        if (item.url === SERVICES_EN || item.url === SERVICES_RO) {
+          item.links = [
+            { url: SERVICES_EN, lang: 'en' },
+            { url: SERVICES_RO, lang: 'ro' },
+          ];
+        }
+        return item;
+      },
+      // The six top-level routes render on demand (cookie-based theme), so the
       // sitemap can't auto-discover them from the static build output. List them
       // explicitly. Detail routes (/blog/*, /projects/*) stay prerendered and
       // are picked up automatically.
       customPages: [
         `${SITE}/`,
+        SERVICES_EN,
+        SERVICES_RO,
         `${SITE}/projects`,
         `${SITE}/cv`,
         `${SITE}/blog`,

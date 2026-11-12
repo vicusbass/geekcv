@@ -4,22 +4,23 @@
  * title / description / structured data regardless of which one is served.
  */
 
-export const HOME_TITLE = 'Vasile Pop — SDET & Web Development Consultant · Cluj-Napoca';
+export const HOME_TITLE = 'Vasile Pop — Web, Mobile & AI Developer, SDET · Cluj-Napoca';
 
 export const HOME_DESCRIPTION =
-  'Vasile Pop (vicusbass) — SDET and web development consultant in Cluj-Napoca. 21+ years building test automation, end-to-end testing strategy, Playwright, pytest, k6. Available for consulting.';
+  'Freelance developer and SDET in Cluj-Napoca. Websites, web and mobile apps, AI agents, integrations and custom CRM/ERP, tested properly. 21+ years. Remote.';
 
 export function buildHomeJsonLd(site: string): Array<Record<string, unknown>> {
   return [
     {
       '@context': 'https://schema.org',
       '@type': 'Person',
+      '@id': `${site}/#person`,
       name: 'Vasile Pop',
       alternateName: 'vicusbass',
       url: site,
-      jobTitle: 'SDET & Web Development Consultant',
+      jobTitle: 'Freelance Software Developer & SDET',
       description:
-        'Senior SDET and web development consultant with 21+ years of experience in test automation, end-to-end testing strategy, and shipping web applications.',
+        'Freelance developer and senior SDET with 21+ years of experience. Builds websites, web and mobile apps, AI agents, integrations and custom CRM/ERP systems, and sets up test automation.',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Cluj-Napoca',
@@ -41,6 +42,18 @@ export function buildHomeJsonLd(site: string): Array<Record<string, unknown>> {
         'GitHub Actions',
         'QA Strategy',
         'End-to-end Testing',
+        'Web Design',
+        'Web Development',
+        'Mobile App Development',
+        'React Native',
+        'AI Agents',
+        'LLM Integration',
+        'API Integration',
+        'Node.js',
+        'FastAPI',
+        'Frappe',
+        'ERPNext',
+        'Custom CRM',
       ],
       sameAs: ['https://github.com/vicusbass', 'https://www.linkedin.com/in/vasilepop/'],
     },
@@ -48,8 +61,10 @@ export function buildHomeJsonLd(site: string): Array<Record<string, unknown>> {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'vicusbass',
+      '@id': `${site}/#website`,
       url: site,
-      author: { '@type': 'Person', name: 'Vasile Pop' },
+      inLanguage: 'en',
+      author: { '@id': `${site}/#person` },
     },
   ];
 }

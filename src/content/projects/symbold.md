@@ -7,7 +7,7 @@ url: "https://symbold.ro"
 role: "Web dev"
 stack: ["Astro", "Tailwind", "Sanity.io", "Vercel"]
 shot: "symbold.png"
-order: 4
+order: 6
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  ▌▌▌▌  SYMBOLD                     │

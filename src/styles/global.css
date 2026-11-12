@@ -366,6 +366,24 @@ a {
 /* Stretch the boot caret class (already defined) into the menu footer too */
 
 /* ─── Top bar mobile breakpoints ─── */
+/* Six nav items: tighten the bar before it collapses into the menu at 760px. */
+@media (max-width: 1180px) {
+  .term-top {
+    gap: 16px;
+  }
+  .term-top .nav a {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  .term-top .clock {
+    display: none;
+  }
+}
+@media (max-width: 960px) {
+  .term-top .brand .brand-extra {
+    display: none;
+  }
+}
 @media (max-width: 760px) {
   .term-top {
     gap: 12px;

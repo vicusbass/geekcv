@@ -6,7 +6,7 @@ blurb: "A Python wrapper for the Mountebank REST API. Test services in isolation
 url: "https://github.com/vicusbass/mounty"
 role: "Solo"
 stack: ["Python", "pytest"]
-order: 8
+order: 10
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  >>> MOUNTY · py wrapper           │

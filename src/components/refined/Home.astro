@@ -62,6 +62,7 @@ const capabilities = [
       </p>
       <div class="rf-hero-cta">
         <a class="rf-btn rf-btn-primary" href="/projects">View selected work →</a>
+        <a class="rf-btn rf-btn-ghost" href="/services">Services</a>
         <a class="rf-btn rf-btn-ghost" href="/cv">Read the CV</a>
         <a class="rf-btn rf-btn-ghost" href="/contact">Get in touch</a>
       </div>
@@ -130,8 +131,13 @@ const capabilities = [
 
   <!-- capabilities -->
   <section class="rf-caps">
-    <div class="rf-kicker">How I help</div>
-    <h2 class="rf-h2 rf-caps-h2">Three things I'm reliably good at</h2>
+    <div class="rf-work-head">
+      <div>
+        <div class="rf-kicker">How I help</div>
+        <h2 class="rf-h2">Three things I'm reliably good at</h2>
+      </div>
+      <a class="rf-textlink" href="/services">All services</a>
+    </div>
     <div class="rf-grid3 rf-caps-grid">
       {capabilities.map((cap) => (
         <div class="rf-cap">
@@ -362,9 +368,6 @@ const capabilities = [
   /* capabilities */
   .rf-caps {
     padding: 72px 0 0;
-  }
-  .rf-caps-h2 {
-    margin: 10px 0 32px;
   }
   .rf-grid3 {
     display: grid;

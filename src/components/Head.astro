@@ -19,11 +19,15 @@ interface Props {
   canonical?: string;
   publishedTime?: string;
   tags?: string[];
+  /** Page language; drives og:locale. Defaults to English. */
+  lang?: 'en' | 'ro';
+  /** hreflang alternates for pages that exist in more than one language. */
+  alternates?: Array<{ hreflang: string; href: string }>;
 }
 
 const {
   title,
-  description = 'Vasile Pop — SDET & web development consultant. 21+ years of test automation, Playwright, pytest, k6 and shipping web apps in TypeScript and Python. Cluj-Napoca, remote.',
+  description = 'Vasile Pop — freelance developer and SDET in Cluj-Napoca. Websites, web and mobile apps, AI agents, integrations and test automation. 21+ years, remote.',
   ogImage = '/og-default.png',
   ogImageWidth = 1200,
   ogImageHeight = 630,
@@ -33,10 +37,16 @@ const {
   canonical: canonicalProp,
   publishedTime,
   tags,
+  lang = 'en',
+  alternates,
 } = Astro.props;
 
+const OG_LOCALE = { en: 'en_US', ro: 'ro_RO' } as const;
+
 const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
-const canonical = canonicalProp ?? new URL(Astro.url.pathname, SITE).toString();
+// On-demand routes answer on "/cv" and "/cv/"; both canonicalise to the slashless one.
+const canonicalPath = Astro.url.pathname.replace(/^\/(services|projects|cv|blog|contact|ro\/servicii)\/$/, '/$1');
+const canonical = canonicalProp ?? new URL(canonicalPath, SITE).toString();
 const ogImageAbs = ogImage
   ? ogImage.startsWith('http')
     ? ogImage
@@ -61,6 +71,7 @@ const fullTitle = title.includes('Vasile Pop') || title.includes('vicusbass')
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+{alternates?.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta name="author" content="Vasile Pop" />
@@ -80,7 +91,8 @@ const fullTitle = title.includes('Vasile Pop') || title.includes('vicusbass')
   </>
 )}
 <meta property="og:site_name" content="vicusbass" />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={OG_LOCALE[lang]} />
+{alternates && <meta property="og:locale:alternate" content={OG_LOCALE[lang === 'ro' ? 'en' : 'ro']} />}
 {publishedTime && <meta property="article:published_time" content={publishedTime} />}
 {tags?.map((t) => <meta property="article:tag" content={t} />)}
 

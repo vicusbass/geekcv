@@ -1,0 +1,40 @@
+---
+/**
+ * The /services page in one language, in whichever theme the visitor chose.
+ * Used by /services (en) and /ro/servicii (ro).
+ */
+import { resolveTheme } from '../lib/theme';
+import { type Lang, SERVICES_COPY, buildServicesJsonLd, servicesAlternates } from '../lib/services';
+import Terminal from '../layouts/Terminal.astro';
+import Refined from '../layouts/Refined.astro';
+import GeekServices from './geek/Services.astro';
+import RefinedServices from './refined/Services.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = SERVICES_COPY[lang];
+const theme = resolveTheme(Astro.cookies) ?? 'geek';
+
+const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
+const shared = {
+  title: copy.title,
+  description: copy.description,
+  active: 'services' as const,
+  lang,
+  jsonLd: buildServicesJsonLd(SITE, copy),
+  alternates: servicesAlternates(SITE),
+};
+---
+
+{theme === 'refined' ? (
+  <Refined {...shared}>
+    <RefinedServices lang={lang} />
+  </Refined>
+) : (
+  <Terminal {...shared}>
+    <GeekServices lang={lang} />
+  </Terminal>
+)}

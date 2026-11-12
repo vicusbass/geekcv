@@ -5,7 +5,7 @@ import Head from '../components/Head.astro';
 interface Props {
   title: string;
   description?: string;
-  active?: 'home' | 'work' | 'cv' | 'blog' | 'contact';
+  active?: 'home' | 'services' | 'work' | 'cv' | 'blog' | 'contact';
   ogImage?: string | null;
   ogImageWidth?: number;
   ogImageHeight?: number;
@@ -15,6 +15,8 @@ interface Props {
   canonical?: string;
   publishedTime?: string;
   tags?: string[];
+  lang?: 'en' | 'ro';
+  alternates?: Array<{ hreflang: string; href: string }>;
 }
 
 const {
@@ -30,10 +32,13 @@ const {
   canonical,
   publishedTime,
   tags,
+  lang = 'en',
+  alternates,
 } = Astro.props;
 
 const nav = [
   { id: 'home', href: '/', label: 'Home' },
+  { id: 'services', href: '/services', label: 'Services' },
   { id: 'work', href: '/projects', label: 'Work' },
   { id: 'cv', href: '/cv', label: 'CV' },
   { id: 'blog', href: '/blog', label: 'Writing' },
@@ -42,7 +47,7 @@ const nav = [
 ---
 
 <!doctype html>
-<html lang="en" data-theme="refined">
+<html lang={lang} data-theme="refined">
   <head>
     <Head
       title={title}
@@ -56,6 +61,8 @@ const nav = [
       canonical={canonical}
       publishedTime={publishedTime}
       tags={tags}
+      lang={lang}
+      alternates={alternates}
     />
     <meta name="theme-color" content="#ffffff" />
 

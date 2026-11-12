@@ -1,5 +1,7 @@
 ---
 const EMAIL = 'vasile.pop@gmail.com';
+// Pre-filled from links like /contact?subject=Project%3A%20Mobile%20apps (see /services).
+const SUBJECT = (Astro.url.searchParams.get('subject') ?? '').slice(0, 200);
 const LINKEDIN = 'https://www.linkedin.com/in/vasilepop/';
 const GITHUB = 'https://github.com/vicusbass';
 const LOCATION = 'Cluj-Napoca, RO';
@@ -39,7 +41,7 @@ const LOCATION = 'Cluj-Napoca, RO';
       autocomplete="email"
     />
     <span class="k">Subject:</span>
-    <input type="text" name="subject" maxlength="200" placeholder="re: that thing" />
+    <input type="text" name="subject" maxlength="200" placeholder="re: that thing" value={SUBJECT} />
   </div>
   <div class="compose-body">
     <textarea

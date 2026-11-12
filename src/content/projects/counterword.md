@@ -7,7 +7,7 @@ url: "https://counterword.app"
 role: "Solo"
 stack: ["Astro", "Preact", "Cloudflare Workers", "D1"]
 shot: "counterword.png"
-order: 0
+order: 2
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  ◇ COUNTERWORD                     │
