@@ -7,5 +7,5 @@ url: "https://prajitorianoima.ro/"
 role: "Web dev"
 stack: ["Shopify"]
 shot: "noima.png"
-order: 1
+order: 3
 ---

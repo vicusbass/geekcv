@@ -1,0 +1,22 @@
+# Vasile Pop (vicusbass)
+
+> Freelance software developer and senior SDET based in Cluj-Napoca, Romania, working remotely with clients worldwide. 21+ years in software testing; builds websites, web and mobile apps, AI agents, integrations, backends and custom CRM/ERP systems. English and Romanian.
+
+## Services
+
+- [Web design & branding](https://www.vicusbass.com/services#web-design): branding and UI design in partnership with Symbold (https://www.symbold.ro), a branding studio in Cluj.
+- [Websites & web apps](https://www.vicusbass.com/services#websites): Astro, Next.js, React, TypeScript, Sanity CMS, Vercel.
+- [Mobile apps](https://www.vicusbass.com/services#mobile-apps): cross-platform iOS and Android apps.
+- [AI agents](https://www.vicusbass.com/services#ai-agents): support assistants, document extraction, tool-calling agents (MCP), with evals.
+- [Integrations](https://www.vicusbass.com/services#integrations): REST/GraphQL APIs, webhooks, payments, accounting and CRM sync.
+- [Software testing & QA automation](https://www.vicusbass.com/services#testing): test strategy, QA audits, Playwright, pytest, k6, CI.
+- [Python & Node.js services](https://www.vicusbass.com/services#backend): APIs, background jobs, scrapers, data pipelines.
+- [Custom CRM & ERP apps](https://www.vicusbass.com/services#crm-erp): Frappe / ERPNext or a custom stack.
+
+## Pages
+
+- [Servicii (Romanian)](https://www.vicusbass.com/ro/servicii): the services page in Romanian.
+- [Projects](https://www.vicusbass.com/projects): selected client and open-source work.
+- [CV](https://www.vicusbass.com/cv): work history.
+- [Writing](https://www.vicusbass.com/blog): articles on testing and tooling.
+- [Contact](https://www.vicusbass.com/contact): email vasile.pop@gmail.com, usually a reply within a working day.

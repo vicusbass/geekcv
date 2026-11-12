@@ -42,6 +42,8 @@
     'I build, test and break software for a living. I write Python and TypeScript, design end-to-end test strategies, and ship the occasional side project. Off the clock I play bass and raise two small humans.';
 
   const ROUTES: Record<string, string> = {
+    services: '/services',
+    hire: '/contact',
     projects: '/projects',
     work: '/projects',
     cv: '/cv',
@@ -49,7 +51,6 @@
     blog: '/blog',
     writing: '/blog',
     contact: '/contact',
-    hire: '/contact',
     'hire vasile': '/contact',
     home: '/',
   };
@@ -129,6 +130,7 @@
           '  whoami            who is using this terminal',
           '  ls                list directory',
           '  cat about.txt     who I am, in prose',
+          '  services          what I can build for you',
           '  projects          go to /work',
           '  cv                go to /cv',
           '  blog              go to /blog',
@@ -143,8 +145,9 @@
       if (lower === 'whoami') return push('out', 'vasile · sdet · cluj-napoca · open for consulting');
       if (lower === 'ls' || lower === 'ls -la') {
         for (const line of [
-          'total 5',
+          'total 6',
           'drwxr-xr-x  vasile  staff   home/      → /home',
+          'drwxr-xr-x  vasile  staff   services/  → /services',
           'drwxr-xr-x  vasile  staff   work/      → /projects',
           'drwxr-xr-x  vasile  staff   cv/        → /cv',
           'drwxr-xr-x  vasile  staff   blog/      → /blog',

@@ -7,7 +7,7 @@ url: "https://health-academy.ro"
 role: "Web dev"
 stack: ["Astro", "Tailwind"]
 shot: "HealthAcademyLogo.png"
-order: 5
+order: 7
 asciiFallback: |
   ╭───────────────────────────────────╮
   │  ✚ HEALTH ACADEMY                  │

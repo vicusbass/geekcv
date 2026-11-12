@@ -1,0 +1,493 @@
+---
+import { type Lang, SERVICES_COPY, contactHref } from '../../lib/services';
+
+interface Props {
+  lang: Lang;
+}
+
+const copy = SERVICES_COPY[Astro.props.lang];
+const { services, process, faq, ui } = copy;
+const other = SERVICES_COPY[copy.lang === 'en' ? 'ro' : 'en'];
+
+// Terminal-flavoured labels that only this theme uses.
+const T = {
+  en: { dir: 'services', partner: 'design partner', includes: 'includes', process: 'process' },
+  ro: { dir: 'servicii', partner: 'partener design', includes: 'include', process: 'proces' },
+}[copy.lang];
+
+const total = services.length.toString().padStart(2, '0');
+const pipeline = process.map((p) => p.title.toLowerCase()).join(' -> ');
+---
+
+<div class="term-h" style="padding:40px 24px 16px">
+  <span class="lead">01 //</span>
+  <h1>~/<em>{T.dir}</em>.list</h1>
+  <span class="right">{total} {ui.entries} · cluj-napoca · remote</span>
+</div>
+
+<section class="svc-intro page-enter">
+  <div>
+  <div class="svc-prompt">
+    <span><span class="g">$</span> cat README.md</span>
+    <a class="svc-lang" href={other.path} hreflang={other.lang} lang={other.lang}>[{other.lang}] {ui.switchLabel}</a>
+  </div>
+  <p class="svc-lead">
+    {ui.h1}. {ui.intro[0]}<strong>{ui.intro[1]}</strong>{ui.intro[2]}
+  </p>
+  </div>
+
+  <nav class="svc-ls" aria-label={ui.kicker}>
+    <div class="svc-ls-hd"><span class="g">$</span> ls -la ~/{T.dir}</div>
+    <ul>
+      {services.map((s) => (
+        <li>
+          <a href={`#${s.id}`}>
+            <span class="perm" aria-hidden="true">drwxr-xr-x</span>
+            <span class="dir">{s.id}/</span>
+            <span class="nm">{s.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</section>
+
+<div class="svc-list">
+  {services.map((s, i) => (
+    <article class="svc" id={s.id}>
+      <div class="svc-hd">
+        <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="svc-path">~/{T.dir}/{s.id}.md</span>
+        <span class="svc-no">{(i + 1).toString().padStart(2, '0')}/{total}</span>
+      </div>
+      <div class="svc-bd">
+        <div class="svc-main">
+          <h2><span class="hash" aria-hidden="true">## </span>{s.heading}</h2>
+          <p>{s.summary}</p>
+          {s.partner && (
+            <p class="svc-partner">
+              <span class="g">&gt;</span> {T.partner}:{' '}
+              <a href={s.partner.url} target="_blank" rel="noopener">{s.partner.url.replace('https://', '')} ↗</a>
+            </p>
+          )}
+          <div class="svc-cta">
+            <a class="btn btn-prim" href={contactHref(copy, s)}>$ mail vasile --re "{s.id}"</a>
+          </div>
+        </div>
+        <div class="svc-side">
+          <div class="svc-k">// {T.includes}</div>
+          <ul class="svc-inc">
+            {s.includes.map((it) => <li>{it}</li>)}
+          </ul>
+          <div class="svc-k">// stack</div>
+          <div class="svc-stack">{s.stack.map((t) => <span>{t}</span>)}</div>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+
+<div class="term-h">
+  <span class="lead">pipeline //</span>
+  <h2>~/<em>{T.process}</em></h2>
+  <span class="right">{pipeline}</span>
+</div>
+
+<ol class="svc-proc">
+  {process.map((p) => (
+    <li>
+      <div class="svc-proc-no">[{p.step}]</div>
+      <h3>{p.title.toLowerCase()}</h3>
+      <p>{p.body}</p>
+    </li>
+  ))}
+</ol>
+
+<div class="term-h">
+  <span class="lead">man //</span>
+  <h2>~/<em>faq</em></h2>
+  <span class="right">{faq.length} {ui.questions}</span>
+</div>
+
+<div class="svc-faq">
+  {faq.map((f, i) => (
+    <details open={i === 0}>
+      <summary><span class="g">?</span> {f.q}</summary>
+      <p>{f.a}</p>
+    </details>
+  ))}
+</div>
+
+<section class="svc-end">
+  <div class="svc-end-k"><span class="g">$</span> echo $NEXT_STEP</div>
+  <p class="svc-end-txt">{ui.ctaText}</p>
+  <div class="svc-cta">
+    <a class="btn btn-prim" href={contactHref(copy)}>$ mail vasile -></a>
+    <a class="btn" href="/projects">$ ls /work</a>
+  </div>
+</section>
+
+<style>
+  .g {
+    color: var(--term-accent);
+  }
+  .svc-lang {
+    color: var(--term-accent);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--term-line-strong);
+  }
+  .svc-lang:hover {
+    border-color: var(--term-accent);
+  }
+
+  /* intro */
+  .svc-intro {
+    padding: 28px 24px 8px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .svc-prompt {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .svc-prompt,
+  .svc-ls-hd {
+    font-size: 12px;
+    color: var(--term-dim);
+  }
+  .svc-lead {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--term-fg);
+    max-width: 58ch;
+  }
+  .svc-lead strong {
+    color: var(--term-accent);
+    font-weight: 500;
+  }
+  .svc-ls {
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.45);
+    padding: 12px 14px;
+    font-size: 12.5px;
+  }
+  .svc-ls ul {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+  .svc-ls a {
+    display: grid;
+    grid-template-columns: auto 13ch 1fr;
+    gap: 12px;
+    padding: 3px 4px;
+    color: var(--term-fg);
+    text-decoration: none;
+    border-radius: 2px;
+  }
+  .svc-ls a:hover,
+  .svc-ls a:focus-visible {
+    background: rgba(var(--term-accent-rgb), 0.08);
+    color: var(--term-accent);
+  }
+  .svc-ls .perm {
+    color: var(--term-dim);
+    opacity: 0.6;
+  }
+  .svc-ls .dir {
+    color: var(--term-accent);
+  }
+  .svc-ls .nm {
+    color: var(--term-dim);
+  }
+
+  /* service cards */
+  .svc-list {
+    padding: 24px;
+    display: grid;
+    gap: 20px;
+  }
+  .svc {
+    border: 1px solid var(--term-line-strong);
+    background: rgba(0, 0, 0, 0.45);
+    scroll-margin-top: 80px;
+  }
+  .svc:target {
+    border-color: var(--term-accent);
+    box-shadow: 0 0 24px rgba(var(--term-accent-rgb), 0.15);
+  }
+  .svc-hd {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--term-line);
+    font-size: 11px;
+    color: var(--term-dim);
+  }
+  .svc-hd .dots {
+    display: flex;
+    gap: 5px;
+  }
+  .svc-hd .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .svc-hd .dots i:nth-child(1) {
+    background: var(--term-error);
+  }
+  .svc-hd .dots i:nth-child(2) {
+    background: var(--term-warn);
+  }
+  .svc-hd .dots i:nth-child(3) {
+    background: var(--term-accent);
+  }
+  .svc-path {
+    flex: 1;
+  }
+  .svc-no {
+    color: var(--term-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .svc-bd {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 28px;
+    padding: 22px 22px 24px;
+  }
+  .svc-main h2 {
+    font-family: var(--term-display);
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--term-fg);
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .svc-main h2 .hash {
+    color: var(--term-accent);
+  }
+  .svc-main p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--term-dim);
+    margin: 0 0 14px;
+    max-width: 56ch;
+  }
+  .svc-main .svc-partner {
+    font-size: 12.5px;
+  }
+  .svc-partner a {
+    color: var(--term-fg);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--term-line-strong);
+  }
+  .svc-partner a:hover {
+    color: var(--term-accent);
+    border-color: var(--term-accent);
+  }
+  .svc-cta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .svc-side {
+    border-left: 1px dashed var(--term-line);
+    padding-left: 24px;
+  }
+  .svc-k {
+    font-size: 11px;
+    color: var(--term-dim);
+    opacity: 0.75;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .svc-inc {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--term-fg);
+  }
+  .svc-inc li {
+    display: grid;
+    grid-template-columns: 2ch 1fr;
+    padding: 2px 0;
+  }
+  .svc-inc li::before {
+    content: '+';
+    color: var(--term-accent);
+  }
+  .svc-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .svc-stack span {
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--term-line-strong);
+    color: var(--term-accent);
+    background: rgba(var(--term-accent-rgb), 0.05);
+    border-radius: 2px;
+  }
+
+  /* process */
+  .svc-proc {
+    list-style: none;
+    margin: 0;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .svc-proc li {
+    border: 1px solid var(--term-line);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 16px 18px;
+    position: relative;
+  }
+  .svc-proc li:not(:last-child)::after {
+    content: '->';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--term-accent);
+    font-size: 14px;
+  }
+  .svc-proc-no {
+    color: var(--term-accent);
+    font-size: 12px;
+  }
+  .svc-proc h3 {
+    font-family: var(--term-display);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--term-fg);
+    margin: 8px 0 6px;
+  }
+  .svc-proc p {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--term-dim);
+    margin: 0;
+  }
+
+  /* faq */
+  .svc-faq {
+    padding: 24px;
+    display: grid;
+    gap: 10px;
+  }
+  .svc-faq details {
+    border: 1px solid var(--term-line);
+    background: rgba(0, 0, 0, 0.3);
+  }
+  .svc-faq summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--term-fg);
+    list-style: none;
+  }
+  .svc-faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .svc-faq summary:hover {
+    color: var(--term-accent);
+  }
+  .svc-faq details[open] summary {
+    border-bottom: 1px dashed var(--term-line);
+    color: var(--term-accent);
+  }
+  .svc-faq p {
+    margin: 0;
+    padding: 12px 16px 14px 34px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--term-dim);
+  }
+
+  /* end cta */
+  .svc-end {
+    margin: 24px;
+    padding: 28px 24px;
+    border: 1px solid var(--term-line-strong);
+    background: rgba(var(--term-accent-rgb), 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .svc-end-k {
+    font-size: 12px;
+    color: var(--term-dim);
+  }
+  .svc-end-txt {
+    margin: 0;
+    font-family: var(--term-display);
+    font-size: 20px;
+    line-height: 1.35;
+    color: var(--term-fg);
+    max-width: 40ch;
+  }
+  .svc-end .svc-cta {
+    justify-content: center;
+  }
+
+  @media (max-width: 980px) {
+    .svc-intro {
+      grid-template-columns: 1fr;
+    }
+    .svc-proc {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .svc-proc li::after {
+      display: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .svc-bd {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .svc-side {
+      border-left: 0;
+      border-top: 1px dashed var(--term-line);
+      padding: 18px 0 0;
+    }
+  }
+  @media (max-width: 600px) {
+    .svc-intro,
+    .svc-list,
+    .svc-proc,
+    .svc-faq {
+      padding-inline: 16px;
+    }
+    .svc-end {
+      margin-inline: 16px;
+    }
+    .svc-ls .perm {
+      display: none;
+    }
+    .svc-ls a {
+      grid-template-columns: 13ch 1fr;
+    }
+    .svc-proc {
+      grid-template-columns: 1fr;
+    }
+    .svc-end-txt {
+      font-size: 17px;
+    }
+  }
+</style>

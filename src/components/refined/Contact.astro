@@ -1,5 +1,7 @@
 ---
 const EMAIL = 'vasile.pop@gmail.com';
+// Pre-filled from links like /contact?subject=Project%3A%20Mobile%20apps (see /services).
+const SUBJECT = (Astro.url.searchParams.get('subject') ?? '').slice(0, 200);
 const LINKEDIN = 'https://www.linkedin.com/in/vasilepop/';
 const GITHUB = 'https://github.com/vicusbass';
 
@@ -37,7 +39,7 @@ const contacts = [
         </div>
         <label class="rf-field rf-field-block">
           <span class="rf-field-label">Subject</span>
-          <input class="rf-input" type="text" name="subject" maxlength="200" placeholder="What's this about?" />
+          <input class="rf-input" type="text" name="subject" maxlength="200" placeholder="What's this about?" value={SUBJECT} />
         </label>
         <label class="rf-field rf-field-block">
           <span class="rf-field-label">Message</span>
