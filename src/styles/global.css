@@ -1084,7 +1084,10 @@ html[data-theme="refined"] body {
   font-size: 16px;
   line-height: 1.6;
 }
-html[data-theme="refined"] a {
+/* Zero specificity on purpose: every component class (.rf-btn-primary,
+   .rf-textlink, ...) must win over this reset. As a plain selector it beat
+   them all, so button-links silently inherited their parent's text colour. */
+:where(html[data-theme="refined"]) a {
   color: inherit;
 }
 html[data-theme="refined"] ::selection {
