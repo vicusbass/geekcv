@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import { getAsset } from '../../lib/assets';
+import { HOME, CONTACT } from '../../lib/home';
 
 const featured = (await getCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order)
@@ -21,69 +22,40 @@ const portrait = portraitSrc
   ? await getImage({ src: portraitSrc, width: 720, format: 'webp', quality: 85 })
   : null;
 
-const stats: Array<[string, string]> = [
-  ['21+', 'years shipping'],
-  ['12', 'teams & companies'],
-  ['∞', 'flaky tests retired'],
-];
-
-const clients = ['Distribusion', 'ComplyAdvantage', 'Hopin', 'LeadIQ', 'Intel', 'Zartis'];
-
-const capabilities = [
-  {
-    no: '01',
-    title: 'Test strategy & automation',
-    body: 'End-to-end strategy, framework setup, and automation in Python & TypeScript — Playwright, pytest, the works.',
-  },
-  {
-    no: '02',
-    title: 'Performance & load',
-    body: 'k6.io benchmarking and soak tests that tell you where things break before your users find out.',
-  },
-  {
-    no: '03',
-    title: 'Web development',
-    body: 'Production sites and apps in Astro and Next.js — design-minded, fast, and maintainable.',
-  },
-];
+const headline = HOME.headline.map((l) => `${l.pre}${l.em}${l.post}`).join(' ');
+const { cta } = HOME;
 ---
 
 <div class="rf-page">
   <!-- hero -->
   <section class="rf-hero">
     <div>
-      <div class="rf-kicker">SDET · Web Development · Consulting</div>
-      <h1 class="rf-hero-h1">Tests that fail loudly. Code that ships quietly.</h1>
-      <p class="rf-hero-lead">
-        I'm Vasile Pop — 21+ years of test automation and web development out of
-        Cluj-Napoca, working remote. I design end-to-end test strategies, build
-        automation in Python &amp; TypeScript, and ship production web apps in Astro
-        and Next.js.
-      </p>
+      <div class="rf-kicker">{HOME.positioning}</div>
+      <h1 class="rf-hero-h1">{headline}</h1>
+      <p class="rf-hero-lead">{HOME.lead}</p>
+      <p class="rf-hero-avail">{HOME.availability} {HOME.offClock}</p>
       <div class="rf-hero-cta">
-        <a class="rf-btn rf-btn-primary" href="/projects">View selected work →</a>
-        <a class="rf-btn rf-btn-ghost" href="/services">Services</a>
-        <a class="rf-btn rf-btn-ghost" href="/cv">Read the CV</a>
-        <a class="rf-btn rf-btn-ghost" href="/contact">Get in touch</a>
+        <a class="rf-btn rf-btn-primary" href="/contact">{cta.primary}</a>
+        <a class="rf-btn rf-btn-ghost" href="/projects">{cta.secondary}</a>
       </div>
-      <div class="rf-hero-stats">
-        {stats.map(([n, label]) => (
+      <dl class="rf-hero-stats">
+        {HOME.stats.map((s) => (
           <div>
-            <div class="rf-stat-n">{n}</div>
-            <div class="rf-stat-l">{label}</div>
+            <dt class="rf-stat-n">{s.n}</dt>
+            <dd class="rf-stat-l">{s.label}</dd>
           </div>
         ))}
-      </div>
+      </dl>
     </div>
     <div class="rf-portrait-wrap">
       <div class="rf-portrait">
         {portrait && (
-          <img src={portrait.src} alt="Vasile Pop" loading="eager" />
+          <img src={portrait.src} alt={HOME.name} loading="eager" />
         )}
         <div class="rf-portrait-bar">
           <div>
-            <div class="rf-portrait-name">Vasile Pop</div>
-            <div class="rf-portrait-loc">Cluj-Napoca, RO · remote</div>
+            <div class="rf-portrait-name">{HOME.name}</div>
+            <div class="rf-portrait-loc">{HOME.location}</div>
           </div>
           <div class="rf-portrait-tag">SDET</div>
         </div>
@@ -92,28 +64,25 @@ const capabilities = [
   </section>
 
   <!-- clients strip -->
-  <section class="rf-clients">
+  <section class="rf-clients" aria-label="Worked with">
     <div class="rf-clients-row">
       <span class="rf-clients-label">Worked with</span>
-      {clients.map((c) => <span class="rf-client">{c}</span>)}
+      {HOME.clients.map((c) => <span class="rf-client">{c}</span>)}
     </div>
   </section>
 
   <!-- selected work -->
   <section class="rf-work">
     <div class="rf-work-head">
-      <div>
-        <div class="rf-kicker">Selected work</div>
-        <h2 class="rf-h2">Recent builds</h2>
-      </div>
-      <a class="rf-textlink" href="/projects">All projects →</a>
+      <h2 class="rf-h2">{cta.workTitle}</h2>
+      <a class="rf-textlink" href="/projects">{cta.allWork}</a>
     </div>
     <div class="rf-grid2">
       {featured.map((p, i) => (
         <a class="rf-workcard" href={p.data.url} target="_blank" rel="noreferrer">
           <div class="rf-workcard-shot">
             {thumbs[i] && (
-              <img src={thumbs[i]!.src} srcset={thumbs[i]!.srcset} sizes="(max-width:760px) 92vw, 520px" alt={p.data.title} loading="lazy" />
+              <img src={thumbs[i]!.src} srcset={thumbs[i]!.srcset} sizes="(max-width:760px) 92vw, 520px" alt="" loading="lazy" />
             )}
           </div>
           <div class="rf-workcard-body">
@@ -121,7 +90,11 @@ const capabilities = [
               <span class="rf-workcard-kind">{p.data.kind}</span>
               <span class="rf-workcard-year">{p.data.year}</span>
             </div>
-            <div class="rf-workcard-title">{p.data.title}</div>
+            <div class="rf-workcard-title">
+              {p.data.title}
+              <span class="rf-workcard-ext" aria-hidden="true">↗</span>
+              <span class="sr-only">{cta.externalNote}</span>
+            </div>
             <div class="rf-workcard-blurb">{p.data.blurb}</div>
           </div>
         </a>
@@ -132,21 +105,43 @@ const capabilities = [
   <!-- capabilities -->
   <section class="rf-caps">
     <div class="rf-work-head">
-      <div>
-        <div class="rf-kicker">How I help</div>
-        <h2 class="rf-h2">Three things I'm reliably good at</h2>
-      </div>
-      <a class="rf-textlink" href="/services">All services</a>
+      <h2 class="rf-h2">{cta.capsTitle}</h2>
+      <a class="rf-textlink" href="/services">{cta.allServices}</a>
     </div>
-    <div class="rf-grid3 rf-caps-grid">
-      {capabilities.map((cap) => (
-        <div class="rf-cap">
-          <div class="rf-cap-no">{cap.no}</div>
-          <div class="rf-cap-title">{cap.title}</div>
-          <div class="rf-cap-body">{cap.body}</div>
-        </div>
+    <ul class="rf-grid3 rf-caps-grid">
+      {HOME.capabilities.map((cap) => (
+        <li class="rf-cap">
+          <h3 class="rf-cap-title">{cap.title}</h3>
+          <p class="rf-cap-body">{cap.body}</p>
+        </li>
       ))}
+    </ul>
+  </section>
+
+  <!-- close -->
+  <section class="rf-close" aria-labelledby="rf-close-h">
+    <div class="rf-close-top">
+      <div>
+        <h2 class="rf-close-h" id="rf-close-h">{cta.closeTitle}</h2>
+        <p class="rf-close-p">{cta.closeText}</p>
+      </div>
+      <div class="rf-close-act">
+        <a class="rf-btn rf-btn-primary" href="/contact">{cta.primary}</a>
+        <span class="rf-close-mail">
+          {cta.emailLabel} <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        </span>
+      </div>
     </div>
+    <ol class="rf-close-steps">
+      {HOME.process.map((p) => (
+        <li>
+          <span class="rf-close-no">{p.step}</span>
+          <h3 class="rf-close-title">{p.title}</h3>
+          <p class="rf-close-body">{p.body}</p>
+        </li>
+      ))}
+    </ol>
+    <a class="rf-close-ro" href="/ro/servicii" hreflang="ro" lang="ro">{cta.roLink}</a>
   </section>
 </div>
 
@@ -171,27 +166,38 @@ const capabilities = [
     font-size: clamp(40px, 5.6vw, 64px);
     color: var(--fg);
     margin: 22px 0 0;
+    text-wrap: balance;
   }
   .rf-hero-lead {
     color: var(--muted);
     font-size: 17px;
     line-height: 1.65;
-    max-width: 52ch;
+    max-width: 56ch;
     margin: 26px 0 0;
+  }
+  .rf-hero-avail {
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 56ch;
+    margin: 14px 0 0;
   }
   .rf-hero-cta {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 34px;
+    margin-top: 32px;
   }
   .rf-hero-stats {
     display: flex;
     flex-wrap: wrap;
     gap: 28px;
-    margin-top: 40px;
+    margin: 40px 0 0;
     padding-top: 26px;
     border-top: 1px solid var(--line);
+  }
+  .rf-hero-stats dd {
+    margin: 0;
   }
   .rf-stat-n {
     font-family: var(--display);
@@ -200,9 +206,10 @@ const capabilities = [
     color: var(--fg);
     line-height: 1;
     letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
   }
   .rf-stat-l {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--muted);
     margin-top: 5px;
     letter-spacing: 0.03em;
@@ -240,13 +247,13 @@ const capabilities = [
     letter-spacing: -0.02em;
   }
   .rf-portrait-loc {
-    font-size: 11.5px;
+    font-size: 12.5px;
     color: var(--muted);
     margin-top: 2px;
   }
   .rf-portrait-tag {
-    font-size: 11px;
-    color: var(--accent);
+    font-size: 12px;
+    color: var(--accent-text);
     font-weight: 700;
     letter-spacing: 0.04em;
   }
@@ -265,7 +272,7 @@ const capabilities = [
     padding: 18px 0;
   }
   .rf-clients-label {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.16em;
@@ -276,7 +283,7 @@ const capabilities = [
     font-weight: 700;
     font-size: 17px;
     color: var(--fg);
-    opacity: 0.62;
+    opacity: 0.7;
     letter-spacing: -0.02em;
   }
 
@@ -291,13 +298,17 @@ const capabilities = [
     gap: 16px;
     margin-bottom: 28px;
   }
+  .rf-work-head .rf-textlink {
+    white-space: nowrap;
+  }
   .rf-h2 {
     font-family: var(--display);
     font-weight: var(--h-weight);
     font-size: clamp(28px, 3.2vw, 38px);
     color: var(--fg);
-    margin: 10px 0 0;
+    margin: 0;
     letter-spacing: var(--h-ls);
+    text-wrap: balance;
   }
   .rf-grid2 {
     display: grid;
@@ -313,9 +324,10 @@ const capabilities = [
     background: var(--surface);
     display: flex;
     flex-direction: column;
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
   }
-  .rf-workcard:hover {
+  .rf-workcard:hover,
+  .rf-workcard:focus-visible {
     transform: translateY(-4px);
     box-shadow: var(--shadow);
   }
@@ -341,14 +353,15 @@ const capabilities = [
     gap: 10px;
   }
   .rf-workcard-kind {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
   .rf-workcard-year {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
+    font-variant-numeric: tabular-nums;
   }
   .rf-workcard-title {
     font-family: var(--display);
@@ -358,8 +371,17 @@ const capabilities = [
     margin-top: 8px;
     letter-spacing: var(--h-ls);
   }
+  .rf-workcard-ext {
+    font-size: 15px;
+    color: var(--muted);
+    margin-left: 4px;
+    transition: color 0.2s;
+  }
+  .rf-workcard:hover .rf-workcard-ext {
+    color: var(--accent-text);
+  }
   .rf-workcard-blurb {
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--muted);
     line-height: 1.55;
     margin-top: 7px;
@@ -370,6 +392,9 @@ const capabilities = [
     padding: 72px 0 0;
   }
   .rf-grid3 {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1px;
@@ -382,26 +407,118 @@ const capabilities = [
     background: var(--surface);
     padding: 28px 26px;
   }
-  .rf-cap-no {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 0.04em;
-  }
   .rf-cap-title {
     font-family: var(--display);
     font-weight: 700;
     font-size: 21px;
     color: var(--fg);
-    margin-top: 14px;
+    margin: 0;
     letter-spacing: var(--h-ls);
   }
   .rf-cap-body {
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--muted);
     line-height: 1.6;
-    margin-top: 10px;
+    margin: 10px 0 0;
+  }
+
+  /* close: same ink block as the services CTA */
+  .rf-close {
+    margin-top: 88px;
+    padding: 44px 40px 36px;
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .rf-close-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px 40px;
+    flex-wrap: wrap;
+  }
+  .rf-close-h {
+    font-family: var(--display);
+    font-weight: var(--h-weight);
+    font-size: clamp(28px, 3.2vw, 38px);
+    letter-spacing: var(--h-ls);
+    line-height: 1.08;
+    margin: 0;
+    color: var(--bg);
+    text-wrap: balance;
+  }
+  .rf-close-p {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .rf-close-act {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .rf-close-mail {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .rf-close-mail a {
+    color: var(--bg);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+  .rf-close-mail a:hover {
+    color: var(--accent);
+  }
+  .rf-close-steps {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 28px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+  .rf-close-no {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .rf-close-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: var(--h-ls);
+    margin: 8px 0 0;
+    color: var(--bg);
+  }
+  .rf-close-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.72);
+    margin: 6px 0 0;
+  }
+  .rf-close-ro {
+    display: inline-block;
+    margin-top: 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bg);
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+    text-underline-offset: 4px;
+  }
+  .rf-close-ro:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+  .rf-close :focus-visible {
+    outline-color: var(--bg);
   }
 
   @media (max-width: 980px) {
@@ -410,11 +527,29 @@ const capabilities = [
       gap: 38px;
       padding-top: 48px;
     }
+    .rf-portrait-wrap {
+      max-width: 380px;
+    }
+    .rf-close-steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
   @media (max-width: 760px) {
     .rf-grid2,
     .rf-grid3 {
       grid-template-columns: 1fr;
+    }
+    .rf-close {
+      padding: 32px 22px 28px;
+    }
+  }
+  @media (max-width: 480px) {
+    .rf-close-steps {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .rf-work-head {
+      flex-wrap: wrap;
     }
   }
 </style>

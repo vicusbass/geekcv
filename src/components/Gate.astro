@@ -1,6 +1,7 @@
 ---
 import Head from './Head.astro';
 import { HOME_TITLE, HOME_DESCRIPTION, buildHomeJsonLd } from '../lib/seo';
+import { HOME } from '../lib/home';
 
 const SITE = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.vicusbass.com';
 const jsonLd = buildHomeJsonLd(SITE);
@@ -24,7 +25,7 @@ const jsonLd = buildHomeJsonLd(SITE);
       <div class="gate-glow" aria-hidden="true"></div>
 
       <div class="gate-intro">
-        <div class="gate-eyebrow">vicusbass.com</div>
+        <p class="gate-who">{HOME.name} · {HOME.positioning.toLowerCase()}</p>
         <h1 class="gate-h1">Same engineer. Two very<br />different rooms.</h1>
         <p class="gate-sub">
           Choose how you'd like to meet me — the terminal, or the suit. The work
@@ -34,9 +35,9 @@ const jsonLd = buildHomeJsonLd(SITE);
 
       <div class="gate-cards">
         <!-- geek card -->
-        <button type="button" class="gate-card gate-card-geek" data-pick="geek">
+        <button type="button" class="gate-card gate-card-geek" data-pick="geek" aria-label="Enter terminal: the geek view">
           <div class="gate-geek-bar">
-            <span class="gate-dots">
+            <span class="gate-dots" aria-hidden="true">
               <i style="background:#ff6b6b"></i><i style="background:#ffd93d"></i><i style="background:#5fff9c"></i>
             </span>
             <span>~/vicusbass — zsh</span>
@@ -46,18 +47,18 @@ const jsonLd = buildHomeJsonLd(SITE);
             Plays bass, breaks builds on purpose, enjoys it far too much.
           </div>
           <div class="gate-geek-enter">
-            enter terminal <span>→</span><span class="gate-caret"></span>
+            enter terminal <span aria-hidden="true">→</span><span class="gate-caret" aria-hidden="true"></span>
           </div>
         </button>
 
         <!-- refined card -->
-        <button type="button" class="gate-card gate-card-refined" data-pick="refined">
+        <button type="button" class="gate-card gate-card-refined" data-pick="refined" aria-label="View portfolio: the refined view">
           <div class="gate-ref-eyebrow">Portfolio · est. 2002</div>
           <div class="gate-ref-title">The serious me</div>
           <div class="gate-ref-desc">
-            Ships on time, writes the strategy, sweats the details.
+            Projects, CV and services on a plain white page. No scanlines.
           </div>
-          <div class="gate-ref-enter">view portfolio <span>→</span></div>
+          <div class="gate-ref-enter">view portfolio <span aria-hidden="true">→</span></div>
         </button>
       </div>
 
@@ -140,11 +141,12 @@ const jsonLd = buildHomeJsonLd(SITE);
         max-width: 680px;
         animation: vp-fade 0.6s ease both;
       }
-      .gate-eyebrow {
-        font-size: 12px;
-        letter-spacing: 0.34em;
+      .gate-who {
+        margin: 0;
+        font-size: 13px;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.42);
+        color: rgba(255, 255, 255, 0.68);
         font-weight: 600;
       }
       .gate-h1 {
@@ -155,7 +157,7 @@ const jsonLd = buildHomeJsonLd(SITE);
         letter-spacing: -0.035em;
       }
       .gate-sub {
-        color: rgba(255, 255, 255, 0.55);
+        color: rgba(255, 255, 255, 0.68);
         font-size: 15.5px;
         line-height: 1.6;
         max-width: 46ch;
@@ -171,6 +173,10 @@ const jsonLd = buildHomeJsonLd(SITE);
         max-width: 760px;
         margin-top: 44px;
         animation: vp-fade 0.7s ease 0.08s both;
+      }
+      .gate-card:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 4px;
       }
       .gate-card {
         cursor: pointer;
@@ -190,10 +196,10 @@ const jsonLd = buildHomeJsonLd(SITE);
         font-family: "JetBrains Mono", monospace;
         transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s;
       }
-      .gate-card-geek:hover {
+      .gate-card-geek:hover,
+      .gate-card-geek:focus-visible {
         transform: translateY(-4px);
-        box-shadow: 0 24px 50px -24px rgba(95, 255, 156, 0.32);
-        border-color: rgba(95, 255, 156, 0.6);
+        border-color: rgba(95, 255, 156, 0.7);
       }
       .gate-geek-bar {
         display: flex;
@@ -222,7 +228,7 @@ const jsonLd = buildHomeJsonLd(SITE);
         margin-top: 6px;
       }
       .gate-geek-desc {
-        font-size: 12.5px;
+        font-size: 13px;
         line-height: 1.6;
         color: #7dd3a8;
       }
@@ -248,7 +254,8 @@ const jsonLd = buildHomeJsonLd(SITE);
         font-family: "Hanken Grotesk", sans-serif;
         transition: transform 0.22s ease, box-shadow 0.22s ease;
       }
-      .gate-card-refined:hover {
+      .gate-card-refined:hover,
+      .gate-card-refined:focus-visible {
         transform: translateY(-4px);
         box-shadow: 0 24px 50px -22px rgba(0, 0, 0, 0.5);
       }
@@ -256,7 +263,7 @@ const jsonLd = buildHomeJsonLd(SITE);
         font-size: 11px;
         letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: #22c55e;
+        color: #15803d;
         font-weight: 700;
       }
       .gate-ref-title {
@@ -266,14 +273,14 @@ const jsonLd = buildHomeJsonLd(SITE);
         margin-top: 6px;
       }
       .gate-ref-desc {
-        font-size: 12.5px;
+        font-size: 13px;
         line-height: 1.6;
-        color: #73757c;
+        color: #63656b;
       }
       .gate-ref-enter {
         margin-top: auto;
         font-size: 13px;
-        color: #22c55e;
+        color: #15803d;
         font-weight: 700;
         display: flex;
         align-items: center;
@@ -283,13 +290,27 @@ const jsonLd = buildHomeJsonLd(SITE);
       .gate-note {
         position: relative;
         margin-top: 34px;
-        font-size: 12.5px;
-        color: rgba(255, 255, 255, 0.4);
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.62);
       }
 
       @media (max-width: 640px) {
         .gate-cards {
           grid-template-columns: 1fr;
+        }
+        .gate-who {
+          letter-spacing: 0.14em;
+          font-size: 12px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .gate-intro,
+        .gate-cards,
+        .gate-caret {
+          animation: none;
+        }
+        .gate-card {
+          transition: none;
         }
       }
     </style>

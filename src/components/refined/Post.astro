@@ -53,7 +53,7 @@ const fmtDate = (d: Date) => {
     font-size: 12px;
     letter-spacing: var(--kicker-ls);
     text-transform: var(--kicker-tt);
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 700;
     text-decoration: none;
   }
@@ -123,10 +123,10 @@ const fmtDate = (d: Date) => {
     margin: 6px 0;
   }
   .rf-post-prose :global(li::marker) {
-    color: var(--accent);
+    color: var(--accent-text);
   }
   .rf-post-prose :global(a) {
-    color: var(--accent);
+    color: var(--accent-text);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -160,9 +160,9 @@ const fmtDate = (d: Date) => {
     color: inherit;
   }
   .rf-post-prose :global(blockquote) {
-    border-left: 3px solid var(--accent);
+    border-left: 1px solid var(--line);
     margin: 24px 0;
-    padding: 4px 0 4px 20px;
+    padding: 4px 0 4px 22px;
     color: var(--muted);
     font-style: italic;
   }

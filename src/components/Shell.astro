@@ -9,16 +9,17 @@
     <span class="shell-clock" data-shell-clock>--:--:--</span>
   </div>
   <div class="shell-bd">
-    <div class="shell-history" data-shell-history>
+    <div class="shell-history" data-shell-history role="log" aria-live="polite" aria-label="Terminal output">
       <div class="shell-line shell-sys"><span class="shell-glyph">#</span><span>vicusbass.os v2.6.0 — type `help` for commands</span></div>
       <div class="shell-line shell-sys"><span class="shell-glyph">#</span><span>tip: try `bass --play`, `cv`, `projects`, `whoami`</span></div>
     </div>
-    <pre class="shell-bass" data-shell-bass hidden></pre>
+    <pre class="shell-bass" data-shell-bass aria-hidden="true" hidden></pre>
     <div class="shell-input-row">
-      <span class="shell-glyph shell-prompt">$</span>
+      <span class="shell-glyph shell-prompt" aria-hidden="true">$</span>
       <input
         type="text"
         class="shell-input"
+        aria-label="Terminal command"
         data-shell-input
         placeholder="type `help` and press enter"
         autocomplete="off"
@@ -27,9 +28,9 @@
         spellcheck="false"
       />
     </div>
-    <div class="shell-hint">
+    <div class="shell-hint" aria-hidden="true">
       <span>↑/↓ history</span>
-      <span>tab to cycle</span>
+      <span>tab to complete</span>
       <span>try: <em>bass --play</em></span>
     </div>
   </div>
@@ -54,6 +55,24 @@
     'hire vasile': '/contact',
     home: '/',
   };
+
+  // Everything `run` understands, in the order Tab offers it.
+  const COMMANDS = [
+    'help',
+    'whoami',
+    'ls',
+    'cat about.txt',
+    'services',
+    'projects',
+    'cv',
+    'blog',
+    'contact',
+    'hire vasile',
+    'home',
+    'bass --play',
+    'date',
+    'clear',
+  ];
 
   const BASS_FRAMES = [
     '  ♪  ┊┊┃┊┊┃┊┊  ──── G ────  ',
@@ -80,6 +99,11 @@
     tick();
     setInterval(tick, 1000);
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const scrollToEnd = () => {
+      scrollHost.scrollTop = scrollHost.scrollHeight;
+    };
+
     const stack: string[] = [];
     let stackIdx = -1;
     let bassTimer: number | null = null;
@@ -96,17 +120,20 @@
       body.textContent = text;
       row.append(glyph, body);
       history.appendChild(row);
-      scrollHost.scrollTop = scrollHost.scrollHeight;
+      scrollToEnd();
     };
 
     const playBass = () => {
       if (bassTimer) window.clearInterval(bassTimer);
       bassEl.hidden = false;
       bassEl.textContent = `♪ bass --play  ▶  4-string walking bass\n${BASS_FRAMES[0]}`;
+      scrollToEnd();
       let i = 0;
+      // Reduced motion: hold one frame instead of animating.
+      const frames = reduceMotion.matches ? 1 : 32;
       bassTimer = window.setInterval(() => {
         i++;
-        if (i >= 32) {
+        if (i >= frames) {
           window.clearInterval(bassTimer!);
           bassTimer = null;
           bassEl.hidden = true;
@@ -180,7 +207,32 @@
       push('err', `zsh: command not found: ${c}. try \`help\`.`);
     };
 
+    // Tab completion: the first Tab completes what was typed, further Tabs
+    // cycle through the other matches. An empty or unmatched prompt lets Tab
+    // move focus as usual, so keyboard users are never trapped in the shell.
+    let tabSeed: string | null = null;
+    let tabIdx = -1;
+    // Typing, pasting or autofill starts a fresh completion. Setting .value
+    // from the Tab handler does not fire `input`, so cycling survives.
+    input.addEventListener('input', () => {
+      tabSeed = null;
+      tabIdx = -1;
+    });
+
     input.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+        const seed = (tabSeed ?? input.value).trimStart().toLowerCase();
+        const matches = seed ? COMMANDS.filter((cmd) => cmd.startsWith(seed)) : [];
+        if (!matches.length) return;
+        e.preventDefault();
+        tabSeed = seed;
+        tabIdx = (tabIdx + 1) % matches.length;
+        input.value = matches[tabIdx];
+        return;
+      }
+      tabSeed = null;
+      tabIdx = -1;
+
       if (e.key === 'Enter') {
         run(input.value);
         input.value = '';
@@ -205,11 +257,16 @@
 
 <style>
   .shell {
+    transition: border-color 0.15s;
     border: 1px solid var(--term-line-strong);
     background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
     font-family: var(--term-mono);
     box-shadow: 0 0 24px rgba(var(--term-accent-rgb), 0.05);
+  }
+  /* The input drops its outline; the whole window carries focus instead. */
+  .shell:focus-within {
+    border-color: var(--term-accent);
   }
   .win-hd {
     display: flex;
@@ -256,7 +313,9 @@
     font-size: 12.5px;
     cursor: text;
   }
-  .shell-line {
+  /* History rows are created by the script below, so they never receive
+     Astro's scope attribute: reach them through the scoped .shell root. */
+  .shell :global(.shell-line) {
     display: flex;
     gap: 8px;
     white-space: pre-wrap;
@@ -264,27 +323,24 @@
     color: var(--term-fg);
     line-height: 1.5;
   }
-  .shell-line.shell-out {
+  .shell :global(.shell-line.shell-out) {
     padding-left: 14px;
   }
-  .shell-line.shell-sys {
+  .shell :global(.shell-line.shell-sys),
+  .shell :global(.shell-line.shell-sys .shell-glyph) {
     color: var(--term-dim);
   }
-  .shell-line.shell-in .shell-glyph {
+  .shell :global(.shell-line.shell-in .shell-glyph) {
     color: var(--term-accent);
   }
-  .shell-line.shell-sys .shell-glyph {
-    color: var(--term-dim);
-  }
-  .shell-line.shell-err {
+  .shell :global(.shell-line.shell-err),
+  .shell :global(.shell-line.shell-err .shell-glyph) {
     color: var(--term-warn);
   }
-  .shell-line.shell-err .shell-glyph {
-    color: var(--term-warn);
-  }
-  .shell-glyph {
+  .shell :global(.shell-glyph) {
     display: inline-block;
     width: 1ch;
+    flex: none;
   }
 
   .shell-bass {
@@ -326,7 +382,7 @@
 
   .shell-hint {
     margin-top: 8px;
-    font-size: 10.5px;
+    font-size: 11px;
     color: var(--term-dim);
     display: flex;
     gap: 14px;

@@ -58,21 +58,26 @@ const items = [
       </li>
     ))}
   </ul>
-  <div class="term-menu-foot">press <b>ESC</b> to close_<span class="boot-caret"></span></div>
+  <div class="term-menu-foot">
+    <span class="hint-key">press <b>ESC</b> to close</span><span class="hint-touch">tap <b>[ X ]</b> to close</span>_<span class="boot-caret"></span>
+  </div>
 </dialog>
 
 <script>
   const clock = document.getElementById('term-clock');
   if (clock) {
+    // Show Cluj time, not the visitor's: the zone label comes from Intl so it
+    // flips between EET and EEST with daylight saving.
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Bucharest',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'short',
+    });
     const tick = () => {
-      const t = new Date();
-      const time = t.toLocaleString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      });
-      clock.textContent = `${time} EET`;
+      clock.textContent = fmt.format(new Date());
     };
     tick();
     setInterval(tick, 1000);
