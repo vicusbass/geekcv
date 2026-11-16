@@ -1,0 +1,15 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": ["src/components/Gate.astro"],
+        "createdAt": "2026-11-16T08:44:16.619Z",
+        "reason": "agent decision: DESIGN.md Gate Cards spec requires the geek card's 'glowing command'; phosphor text glow is sanctioned by the Light Not Shadow and Accent Word rules"
+      }
+    ]
+  }
+}

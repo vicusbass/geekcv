@@ -17,7 +17,7 @@ const exp = formatUptime();
       <Image src={profile} alt="Vasile Pop" widths={[120, 240]} sizes="120px" />
       <div class="me-tint"></div>
       <div class="me-scan"></div>
-      <div class="me-rec">● REC</div>
+      <div class="me-rec" aria-hidden="true">● REC</div>
     </div>
     <div class="me-meta">
       <div class="me-name">Vasile Pop</div>
@@ -114,7 +114,7 @@ const exp = formatUptime();
     position: absolute;
     bottom: 4px;
     left: 6px;
-    font-size: 9px;
+    font-size: 11px;
     color: var(--term-accent);
     letter-spacing: 0.08em;
     text-shadow: 0 0 6px rgba(var(--term-accent-rgb), 0.6);

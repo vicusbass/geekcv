@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Head from '../components/Head.astro';
+import { CONTACT } from '../lib/home';
 
 interface Props {
   title: string;
@@ -35,6 +36,8 @@ const {
   lang = 'en',
   alternates,
 } = Astro.props;
+
+const year = new Date().getFullYear();
 
 const nav = [
   { id: 'home', href: '/', label: 'Home' },
@@ -128,9 +131,14 @@ const nav = [
     <footer class="rf-footer">
       <div class="rf-shell rf-foot">
         <div class="rf-foot-brand">
-          <span class="rf-foot-mono">VP</span>
-          <span class="rf-foot-copy">© 2026 Vasile Pop · Cluj-Napoca</span>
+          <span class="rf-foot-mono" aria-hidden="true">VP</span>
+          <span class="rf-foot-copy">© {year} Vasile Pop · Cluj-Napoca</span>
         </div>
+        <ul class="rf-foot-links">
+          <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>
+          <li><a href={CONTACT.linkedin.href} target="_blank" rel="noreferrer">LinkedIn</a></li>
+          <li><a href={CONTACT.github.href} target="_blank" rel="noreferrer">GitHub</a></li>
+        </ul>
         <button type="button" class="rf-switch-foot" data-switch-geek>
           Prefer the terminal? Switch to geek view ↗
         </button>
