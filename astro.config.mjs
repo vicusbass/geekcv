@@ -3,7 +3,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import { externalLinks } from './src/lib/external-links';
 
 const SITE = 'https://www.vicusbass.com';
@@ -22,6 +22,41 @@ const blogPages = readdirSync('./src/content/blog')
 export default defineConfig({
   site: SITE,
   adapter: vercel(),
+  // Self-hosted, preloaded fonts with metric-matched fallbacks. Loading them
+  // from Google with a non-blocking stylesheet painted the page in system
+  // fonts first and swapped a moment later.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Hanken Grotesk',
+      cssVariable: '--font-hanken',
+      weights: ['400 800'],
+      styles: ['normal'],
+      // latin-ext carries Romanian ă/ș/ț; unicode-range loads it only when used.
+      subsets: ['latin', 'latin-ext'],
+      fallbacks: ['system-ui', 'sans-serif'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains',
+      weights: ['400 700'],
+      styles: ['normal'],
+      // latin-ext carries Romanian ă/ș/ț; unicode-range loads it only when used.
+      subsets: ['latin', 'latin-ext'],
+      fallbacks: ['ui-monospace', 'monospace'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Space Mono',
+      cssVariable: '--font-space-mono',
+      weights: [400, 700],
+      styles: ['normal'],
+      // latin-ext carries Romanian ă/ș/ț; unicode-range loads it only when used.
+      subsets: ['latin', 'latin-ext'],
+      fallbacks: ['ui-monospace', 'monospace'],
+    },
+  ],
   // Astro 7 defaults to 'jsx', which drops whitespace between inline elements
   // ("$ cd /work" → "$cd /work"). The templates rely on HTML whitespace rules.
   compressHTML: true,

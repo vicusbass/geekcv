@@ -195,6 +195,8 @@ Each room is neutral plus one green; warn and error colours exist only in geek, 
 **Refined Font:** Hanken Grotesk (with system-ui) for everything, display and body
 **Gate:** Hanken Grotesk for the lobby; each card uses its own room's fonts.
 
+**Loading:** all three families are self-hosted through the Astro Fonts API (`fonts` in `astro.config.mjs`, `<Font />` in each layout's head), never linked from Google. CSS reads them only through `--font-hanken`, `--font-jetbrains` and `--font-space-mono`, which carry Astro's metric-matched fallbacks, so the first paint is already the right size and shape. Only the `latin` subset is preloaded; `latin-ext` (Romanian ă, ș, ț) loads by unicode-range when a page needs it.
+
 **Character:** Geek pairs a quirky typewriter mono for titles with a precise coding mono for everything else, so the whole room reads like a terminal session. Refined uses one grotesk and builds hierarchy from weight and tight negative tracking alone, the Swiss way.
 
 ### Hierarchy
@@ -221,7 +223,13 @@ Each room is neutral plus one green; warn and error colours exist only in geek, 
 
 **Home in both rooms** renders from one copy module, `src/lib/home.ts` (as services does from `src/lib/services.ts`): positioning, headline, lead, stats, clients, capabilities, closing CTA and process. The rooms may regroup these, never add or drop them. Hero CTAs are one primary (contact) and one secondary (work); everything else lives in the nav.
 
-**Sticky headers** depend on `overflow-x: clip` (never `hidden`) on `html` and `body`; `hidden` turns body into a scroll container and silently unsticks both headers.
+**Sticky headers** depend on `overflow-x: clip` (never `hidden`) on `html` and `body`; `hidden` turns body into a scroll container and silently unsticks both headers. `scroll-padding-top` (80px geek, 96px refined, 72px refined on phones) keeps focused elements and anchor targets below them.
+
+**Refined on phones (640px and below):** the header is one 63px row: the monogram (name visually hidden) and a sideways-scrolling nav with a fade on the cut edge; the current page's link is scrolled into view on load.
+
+**Touch:** on `(pointer: coarse)`, buttons and button-links reach 44px tall and inline text links get an invisible 12px hit area. That block sets height only, never `display`, so it cannot unhide controls hidden at a breakpoint.
+
+**Language:** both rooms keep a persistent link to the other language's services page: the `ro`/`en` chip in the geek top bar (and a `cd /ro/servicii` menu item), "Servicii în română"/"English" in the refined utility strip, and a link beside the gate note.
 
 **Gate:** centred column, max 680px intro over a 760px two-card grid, single column under 640px.
 
@@ -284,10 +292,10 @@ Geek buttons are playful terminal controls; refined buttons are precise rectangl
 - **Geek clock:** always Cluj time (`Europe/Bucharest`), with the zone label from `Intl` (EET or EEST), never the visitor's local time.
 
 ### Focus
-Every interactive element shows a ring on `:focus-visible`. Geek: 2px Phosphor Green outline, 2px offset (controls with their own filled focus state, such as the theme switch and menu items, keep it). Refined: 2px Ink outline, 3px offset; inside the ink CTA block the ring turns Paper. Gate cards: 2px white outline, 4px offset, plus the hover lift. The shell input drops its outline because the whole window border turns Phosphor Green on `:focus-within`.
+Both layouts open with a skip link to `#main` ("$ skip to content" in a Phosphor Green chip; "Skip to content" on Ink in refined), visible only on focus. Every interactive element shows a ring on `:focus-visible`. Geek: 2px Phosphor Green outline, 2px offset (controls with their own filled focus state, such as the theme switch and menu items, keep it). Refined: 2px Ink outline, 3px offset; inside the ink CTA block the ring turns Paper. Gate cards: 2px white outline, 4px offset, plus the hover lift. The shell input drops its outline because the whole window border turns Phosphor Green on `:focus-within`.
 
 ### Boot Sequence (signature, geek)
-A full-screen black overlay with the ASCII logo and status lines that appear in steps (`[ OK ]` in green), a blinking block caret, then a vertical CRT collapse (`scaleY(0.02)`, brightness 3) on exit. Skipped under `prefers-reduced-motion`.
+A full-screen black overlay with the ASCII logo and status lines that appear in steps (`[ OK ]` in green), a blinking block caret, then a vertical CRT collapse (`scaleY(0.02)`, brightness 3) on exit. Skipped under `prefers-reduced-motion`. The skip hint reads "PRESS SPACE TO SKIP" for mouse and keyboard and "TAP TO SKIP" on touch; status lines truncate rather than wrap so `[ OK ]` stays whole. Any non-modifier key ends the boot; Tab passes through so focus never moves around a hidden page.
 
 ### Interactive Shell (signature, geek)
 A real command prompt inside a window on the home page: input lines in green glyphs, system lines in Dim Mint, errors in Warn Amber, plus the `bass --play` easter egg. Tab completes and cycles known commands; on an empty or unmatched prompt Tab moves focus as usual. The input is labelled, the history is a polite live log, and rows created by script are styled through `.shell :global(...)` because they never get Astro's scope attribute.
@@ -311,5 +319,7 @@ Above them, a line with the name and positioning ("Vasile Pop · software built 
 - **Don't** let the themes bleed together: no monospace type, glow, scanlines or dark surfaces in refined; no Hanken Grotesk, flat white surfaces or soft drop shadows in geek. The gate is the only place both appear.
 - **Don't** round refined corners; 0px is the rule, pills (999px) the only exception.
 - **Don't** use Warn Amber or Error Coral outside title-bar dots and error output.
+- **Don't** give a refined element colour through a plain `html[data-theme="refined"] a`-style selector: the link reset is wrapped in `:where()` so component classes always win. A plain reset made button-links inherit their parent's text colour (white on Pass Green in the ink CTA).
+- **Don't** link fonts from a CDN or hard-code family names; use the `--font-*` variables.
 - **Don't** use a coloured side stripe (`border-left` or an inset shadow over 1px) to mark a quote, card or target; refined blockquotes use a 1px Hairline and a targeted service gets a 1px Pass Green frame.
 - **Don't** colour refined headings or set them in italic; the Pass Green kicker above carries the accent.

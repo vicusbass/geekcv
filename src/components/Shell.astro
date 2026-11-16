@@ -93,8 +93,16 @@
     const clock = root.querySelector<HTMLElement>('[data-shell-clock]')!;
     const scrollHost = root.querySelector<HTMLElement>('.shell-bd')!;
 
+    // Cluj time, matching the header clock.
+    const clockFmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Bucharest',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
     const tick = () => {
-      clock.textContent = new Date().toLocaleTimeString('en-GB');
+      clock.textContent = clockFmt.format(new Date());
     };
     tick();
     setInterval(tick, 1000);
@@ -123,14 +131,43 @@
       scrollToEnd();
     };
 
+    // Multi-line output lands as one node, so the live log announces it once
+    // instead of line by line.
+    const pushBlock = (lines: string[]) => {
+      const block = document.createElement('div');
+      for (const text of lines) {
+        const row = document.createElement('div');
+        row.className = 'shell-line shell-out';
+        const glyph = document.createElement('span');
+        glyph.className = 'shell-glyph';
+        glyph.textContent = GLYPH.out;
+        const body = document.createElement('span');
+        body.textContent = text;
+        row.append(glyph, body);
+        block.appendChild(row);
+      }
+      history.appendChild(block);
+      scrollToEnd();
+    };
+
     const playBass = () => {
-      if (bassTimer) window.clearInterval(bassTimer);
+      if (bassTimer) {
+        window.clearInterval(bassTimer);
+        window.clearTimeout(bassTimer);
+      }
       bassEl.hidden = false;
       bassEl.textContent = `♪ bass --play  ▶  4-string walking bass\n${BASS_FRAMES[0]}`;
       scrollToEnd();
+      // Reduced motion: hold one still frame for a few seconds, no animation.
+      if (reduceMotion.matches) {
+        bassTimer = window.setTimeout(() => {
+          bassTimer = null;
+          bassEl.hidden = true;
+        }, 4000);
+        return;
+      }
       let i = 0;
-      // Reduced motion: hold one frame instead of animating.
-      const frames = reduceMotion.matches ? 1 : 32;
+      const frames = 32;
       bassTimer = window.setInterval(() => {
         i++;
         if (i >= frames) {
@@ -152,40 +189,38 @@
       const lower = c.toLowerCase();
 
       if (lower === 'help') {
-        for (const line of [
+        pushBlock([
           'available commands:',
           '  whoami            who is using this terminal',
           '  ls                list directory',
           '  cat about.txt     who I am, in prose',
           '  services          what I can build for you',
-          '  projects          go to /work',
+          '  projects          go to /projects',
           '  cv                go to /cv',
           '  blog              go to /blog',
           '  contact           go to /contact',
           '  bass --play       ♪ ♫',
           '  date              current date/time',
           '  clear             clear screen',
-        ])
-          push('out', line);
+        ]);
         return;
       }
       if (lower === 'whoami') return push('out', 'vasile · sdet · cluj-napoca · open for consulting');
       if (lower === 'ls' || lower === 'ls -la') {
-        for (const line of [
+        pushBlock([
           'total 6',
-          'drwxr-xr-x  vasile  staff   home/      → /home',
-          'drwxr-xr-x  vasile  staff   services/  → /services',
-          'drwxr-xr-x  vasile  staff   work/      → /projects',
-          'drwxr-xr-x  vasile  staff   cv/        → /cv',
-          'drwxr-xr-x  vasile  staff   blog/      → /blog',
-          'drwxr-xr-x  vasile  staff   contact/   → /contact',
-        ])
-          push('out', line);
+          'drwxr-xr-x  vasile  staff   home/      -> /',
+          'drwxr-xr-x  vasile  staff   services/  -> /services',
+          'drwxr-xr-x  vasile  staff   work/      -> /projects',
+          'drwxr-xr-x  vasile  staff   cv/        -> /cv',
+          'drwxr-xr-x  vasile  staff   blog/      -> /blog',
+          'drwxr-xr-x  vasile  staff   contact/   -> /contact',
+        ]);
         return;
       }
       if (lower === 'cat about.txt' || lower === 'about') return push('out', MANIFESTO);
       if (lower in ROUTES) {
-        push('out', `→ navigating to ${ROUTES[lower]}`);
+        push('out', `-> navigating to ${ROUTES[lower]}`);
         window.setTimeout(() => {
           window.location.href = ROUTES[lower];
         }, 250);
@@ -248,8 +283,11 @@
       }
     });
 
-    // Click anywhere in the shell body to focus the input
+    // Click anywhere in the shell body to focus the input. Not on touch
+    // screens: there a tap meant to scroll would pop up the keyboard.
+    const coarse = window.matchMedia('(pointer: coarse)');
     scrollHost.addEventListener('click', (e) => {
+      if (coarse.matches) return;
       if ((e.target as HTMLElement).tagName !== 'INPUT') input.focus();
     });
   }

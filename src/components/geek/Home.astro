@@ -16,7 +16,7 @@ const thumbs = await Promise.all(
     if (!src) return null;
     const img = await getImage({
       src,
-      width: 240,
+      width: 480,
       format: 'webp',
       quality: 80,
     });
@@ -137,7 +137,6 @@ const { cta } = HOME;
   <div class="term-h home-sec-h">
     <span class="lead">mail //</span>
     <h2>~/<em>contact</em></h2>
-    <span class="right">reply · ~1 working day</span>
   </div>
 
   <div class="win close-win">

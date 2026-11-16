@@ -66,12 +66,12 @@
     const linesEl = el('div', 'boot-lines');
 
     const skipEl = el('div', 'boot-skip');
-    skipEl.append(
-      'PRESS ',
-      el('b', null, 'SPACE'),
-      ' TO SKIP_',
-      el('span', 'boot-caret'),
-    );
+    // Keyboard and touch get their own hint; CSS shows one per pointer type.
+    const keyHint = el('span', 'boot-hint-key');
+    keyHint.append('PRESS ', el('b', null, 'SPACE'), ' TO SKIP');
+    const touchHint = el('span', 'boot-hint-touch');
+    touchHint.append(el('b', null, 'TAP'), ' TO SKIP');
+    skipEl.append(keyHint, touchHint, '_', el('span', 'boot-caret'));
 
     overlay.append(ascii, linesEl, skipEl);
 
@@ -90,11 +90,16 @@
       setTimeout(tick, 160 + Math.random() * 120);
     };
 
+    // Any real key ends the boot. Space/Escape/Enter are consumed; anything
+    // else (Tab especially) passes through, so keyboard users never move focus
+    // around a page they cannot see.
+    const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'];
     const onKey = (e) => {
+      if (MODIFIERS.includes(e.key)) return;
       if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
         e.preventDefault();
-        kill();
       }
+      kill();
     };
     const onClick = () => kill();
 
