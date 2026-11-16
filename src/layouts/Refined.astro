@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
+import { Font } from 'astro:assets';
 import Head from '../components/Head.astro';
-import { CONTACT } from '../lib/home';
+import { CONTACT, HOME } from '../lib/home';
 
 interface Props {
   title: string;
@@ -69,27 +70,10 @@ const nav = [
     />
     <meta name="theme-color" content="#ffffff" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap"
-      />
-    </noscript>
+    <Font cssVariable="--font-hanken" preload={[{ subset: 'latin' }]} />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <!-- utility strip -->
     <div class="rf-utility">
       <div class="rf-shell rf-util">
@@ -97,7 +81,14 @@ const nav = [
           <span class="dot"></span>
           Open for consulting · 2026
         </div>
-        <button type="button" class="rf-switch" data-switch-geek>⌘ Geek view ↗</button>
+        <div class="rf-util-end">
+          {lang === 'ro' ? (
+            <a class="rf-lang-util" href="/services" hreflang="en" lang="en">English</a>
+          ) : (
+            <a class="rf-lang-util" href="/ro/servicii" hreflang="ro" lang="ro">{HOME.cta.roLink}</a>
+          )}
+          <button type="button" class="rf-switch" data-switch-geek>⌘ Geek view ↗</button>
+        </div>
       </div>
     </div>
 
@@ -123,7 +114,7 @@ const nav = [
       </div>
     </header>
 
-    <main class="rf-shell rf-main">
+    <main class="rf-shell rf-main" id="main" tabindex="-1">
       <slot />
     </main>
 
@@ -158,6 +149,11 @@ const nav = [
       for (const el of document.querySelectorAll('[data-switch-geek]')) {
         el.addEventListener('click', toGeek);
       }
+
+      // Phones scroll the nav sideways; keep the current page's link in view.
+      document
+        .querySelector('.rf-nav [aria-current="page"]')
+        ?.scrollIntoView({ block: 'nearest', inline: 'center' });
     </script>
   </body>
 </html>

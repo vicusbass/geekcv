@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { Font } from 'astro:assets';
 import Head from '../components/Head.astro';
 import Boot from '../components/Boot.astro';
 import CRTLayers from '../components/CRTLayers.astro';
@@ -63,24 +64,14 @@ const {
     />
     <meta name="theme-color" content="#06080a" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-      media="print"
-      onload="this.media='all'"
-    />
+    <Font cssVariable="--font-jetbrains" preload={[{ subset: 'latin' }]} />
+    <Font cssVariable="--font-space-mono" preload={[{ weight: 400, subset: 'latin' }]} />
   </head>
   <body>
+    <a class="skip-link" href="#main">$ skip to content</a>
     <CRTLayers />
-    <TermTop active={active} />
-    <main class="term-stage page-enter">
+    <TermTop active={active} lang={lang} />
+    <main class="term-stage page-enter" id="main" tabindex="-1">
       <slot />
     </main>
     <TermFoot />

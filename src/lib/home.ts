@@ -54,6 +54,7 @@ export const HOME = {
     closeText: SERVICES_COPY.en.ui.ctaText,
     emailLabel: 'or email',
     roLink: 'Servicii în română',
+    gateNote: 'You can switch between the two anytime, from the top of any page.',
     externalNote: '(opens in a new tab)',
   },
   process: SERVICES_COPY.en.process,
