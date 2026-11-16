@@ -1,0 +1,463 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T11:00:00+02:00",
+  "title": "Design System: vicusbass",
+  "extensions": {
+    "colorMeta": {
+      "geek-phosphor-green": {
+        "role": "primary",
+        "displayName": "Phosphor Green",
+        "canonical": "#5fff9c",
+        "tonalRamp": [
+          "oklch(15% 0.04 152)",
+          "oklch(27% 0.08 152)",
+          "oklch(40% 0.12 152)",
+          "oklch(53% 0.15 152)",
+          "oklch(66% 0.17 152)",
+          "oklch(78% 0.18 152)",
+          "oklch(90% 0.19 152)",
+          "oklch(95% 0.07 152)"
+        ]
+      },
+      "geek-crt-black": {
+        "role": "neutral",
+        "displayName": "CRT Black",
+        "canonical": "#06080a",
+        "tonalRamp": [
+          "oklch(13% 0.005 240)",
+          "oklch(18% 0.006 240)",
+          "oklch(28% 0.007 240)",
+          "oklch(40% 0.008 240)",
+          "oklch(55% 0.008 240)",
+          "oklch(70% 0.007 240)",
+          "oklch(85% 0.005 240)",
+          "oklch(95% 0.003 240)"
+        ]
+      },
+      "geek-crt-black-raised": {
+        "role": "neutral",
+        "displayName": "CRT Black Raised",
+        "canonical": "#0a0e10"
+      },
+      "geek-phosphor-text": {
+        "role": "neutral",
+        "displayName": "Phosphor Text",
+        "canonical": "#cde2d8",
+        "tonalRamp": [
+          "oklch(15% 0.01 165)",
+          "oklch(27% 0.015 165)",
+          "oklch(40% 0.02 165)",
+          "oklch(53% 0.025 165)",
+          "oklch(66% 0.025 165)",
+          "oklch(78% 0.025 165)",
+          "oklch(89% 0.025 165)",
+          "oklch(95% 0.012 165)"
+        ]
+      },
+      "geek-dim-mint": {
+        "role": "neutral",
+        "displayName": "Dim Mint",
+        "canonical": "#7dd3a8",
+        "tonalRamp": [
+          "oklch(15% 0.03 160)",
+          "oklch(27% 0.05 160)",
+          "oklch(40% 0.07 160)",
+          "oklch(53% 0.09 160)",
+          "oklch(66% 0.1 160)",
+          "oklch(80% 0.1 160)",
+          "oklch(88% 0.06 160)",
+          "oklch(95% 0.03 160)"
+        ]
+      },
+      "geek-line": {
+        "role": "neutral",
+        "displayName": "Geek Line",
+        "canonical": "rgba(120, 255, 170, 0.18)"
+      },
+      "geek-line-strong": {
+        "role": "neutral",
+        "displayName": "Geek Line Strong",
+        "canonical": "rgba(120, 255, 170, 0.35)"
+      },
+      "geek-warn-amber": {
+        "role": "functional",
+        "displayName": "Warn Amber",
+        "canonical": "#ffd93d"
+      },
+      "geek-error-coral": {
+        "role": "functional",
+        "displayName": "Error Coral",
+        "canonical": "#ff6b6b"
+      },
+      "refined-pass-green": {
+        "role": "primary",
+        "displayName": "Pass Green",
+        "canonical": "#22c55e",
+        "tonalRamp": [
+          "oklch(15% 0.04 150)",
+          "oklch(27% 0.08 150)",
+          "oklch(40% 0.12 150)",
+          "oklch(53% 0.15 150)",
+          "oklch(63% 0.18 150)",
+          "oklch(72% 0.19 150)",
+          "oklch(85% 0.12 150)",
+          "oklch(95% 0.05 150)"
+        ]
+      },
+      "refined-pass-green-text": {
+        "role": "primary",
+        "displayName": "Pass Green Text",
+        "canonical": "#15803d"
+      },
+      "refined-pass-green-soft": {
+        "role": "primary",
+        "displayName": "Pass Green Soft",
+        "canonical": "rgba(34, 197, 94, 0.08)"
+      },
+      "refined-status-green": {
+        "role": "functional",
+        "displayName": "Status Green",
+        "canonical": "#1f8a4c"
+      },
+      "refined-paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff"
+      },
+      "refined-ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0c0c0d",
+        "tonalRamp": [
+          "oklch(15% 0.002 285)",
+          "oklch(27% 0.003 285)",
+          "oklch(40% 0.004 285)",
+          "oklch(53% 0.005 285)",
+          "oklch(66% 0.005 285)",
+          "oklch(78% 0.004 285)",
+          "oklch(89% 0.003 285)",
+          "oklch(96% 0.002 285)"
+        ]
+      },
+      "refined-graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#73757c",
+        "tonalRamp": [
+          "oklch(15% 0.008 270)",
+          "oklch(27% 0.009 270)",
+          "oklch(40% 0.01 270)",
+          "oklch(56% 0.01 270)",
+          "oklch(66% 0.009 270)",
+          "oklch(78% 0.008 270)",
+          "oklch(89% 0.005 270)",
+          "oklch(96% 0.003 270)"
+        ]
+      },
+      "refined-hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "rgba(12, 12, 13, 0.15)"
+      },
+      "gate-lobby": {
+        "role": "neutral",
+        "displayName": "Gate Lobby",
+        "canonical": "#0d0d0f"
+      }
+    },
+    "typographyMeta": {
+      "geek-display": {
+        "displayName": "Geek Display",
+        "purpose": "Section titles in the term-h header row; one upright <em> word in Phosphor Green with glow."
+      },
+      "geek-title": {
+        "displayName": "Geek Title",
+        "purpose": "Project card and viewer titles."
+      },
+      "geek-body": {
+        "displayName": "Geek Body",
+        "purpose": "All running text in the terminal theme."
+      },
+      "geek-label": {
+        "displayName": "Geek Label",
+        "purpose": "Metadata, window title bars, key/value keys, footers; tabular numerals."
+      },
+      "refined-display": {
+        "displayName": "Refined Display",
+        "purpose": "Home hero headline only."
+      },
+      "refined-headline": {
+        "displayName": "Refined Headline",
+        "purpose": "Section H2s."
+      },
+      "refined-title": {
+        "displayName": "Refined Title",
+        "purpose": "Card and capability titles."
+      },
+      "refined-body": {
+        "displayName": "Refined Body",
+        "purpose": "Running text; leads at 17px in Graphite."
+      },
+      "refined-label": {
+        "displayName": "Refined Kicker",
+        "purpose": "Uppercase Pass Green label above headings."
+      }
+    },
+    "shadows": [
+      {
+        "name": "geek-glow-text",
+        "value": "0 0 12px rgba(95, 255, 156, 0.35)",
+        "purpose": "Accent words, ASCII art, active years, hovered titles in geek."
+      },
+      {
+        "name": "geek-glow-led",
+        "value": "0 0 10px #5fff9c",
+        "purpose": "LED and caret."
+      },
+      {
+        "name": "geek-glow-button",
+        "value": "0 0 16px rgba(95, 255, 156, 0.4)",
+        "purpose": "Primary button hover in geek."
+      },
+      {
+        "name": "geek-glow-ambient",
+        "value": "0 0 24px rgba(95, 255, 156, 0.05)",
+        "purpose": "Ambient halo on the shell window."
+      },
+      {
+        "name": "refined-lift",
+        "value": "0 18px 44px -30px rgba(12, 12, 13, 0.45)",
+        "purpose": "Refined work card hover (with translateY(-4px)) and the portrait frame only."
+      },
+      {
+        "name": "gate-lift-geek",
+        "value": "0 24px 50px -24px rgba(95, 255, 156, 0.32)",
+        "purpose": "Geek gate card hover."
+      },
+      {
+        "name": "gate-lift-refined",
+        "value": "0 24px 50px -22px rgba(0, 0, 0, 0.5)",
+        "purpose": "Refined gate card hover."
+      }
+    ],
+    "motion": [
+      {
+        "name": "geek-transition",
+        "value": "all 0.12s to 0.15s",
+        "purpose": "Geek hover states: quick, snappy."
+      },
+      {
+        "name": "refined-transition",
+        "value": "0.2s ease",
+        "purpose": "Refined hover states: opacity, border and colour."
+      },
+      {
+        "name": "lift",
+        "value": "transform 0.22s ease, box-shadow 0.22s ease",
+        "purpose": "Card lift on hover (refined cards, gate cards)."
+      },
+      {
+        "name": "vp-fade",
+        "value": "opacity 0 -> 1, translateY(10px) -> none, 0.5s to 0.7s ease",
+        "purpose": "Refined page and gate entrance."
+      },
+      {
+        "name": "page-glitch",
+        "value": "0.55s ease-out, translate jitter + hue-rotate",
+        "purpose": "Geek page entrance. Disabled under prefers-reduced-motion (global block in global.css)."
+      },
+      {
+        "name": "crt-flicker",
+        "value": "4s steps(2) infinite",
+        "purpose": "Geek ambient CRT flicker overlay. Disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "caret-blink",
+        "value": "1s steps(2) infinite",
+        "purpose": "Block caret in geek and on the gate."
+      },
+      {
+        "name": "pulse",
+        "value": "2s to 2.4s ease-in-out infinite",
+        "purpose": "Status LED (geek) and status dot (refined)."
+      },
+      {
+        "name": "boot-out",
+        "value": "0.35s steps(3), scaleY(0.02) + brightness(3)",
+        "purpose": "Boot overlay CRT collapse; boot is skipped under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "geek-topbar-tight",
+        "value": "1180px"
+      },
+      {
+        "name": "geek-stack",
+        "value": "1100px"
+      },
+      {
+        "name": "refined-hero-stack",
+        "value": "980px"
+      },
+      {
+        "name": "geek-menu",
+        "value": "760px"
+      },
+      {
+        "name": "refined-single-column",
+        "value": "760px"
+      },
+      {
+        "name": "refined-mobile",
+        "value": "640px"
+      },
+      {
+        "name": "gate-single-column",
+        "value": "640px"
+      },
+      {
+        "name": "geek-mobile",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Geek Button",
+      "kind": "button",
+      "refersTo": "geek-button",
+      "description": "Default terminal button: bordered, mono, fills with a green tint on hover.",
+      "html": "<button class=\"ds-geek-btn\">cat cv.txt</button>",
+      "css": ".ds-geek-btn { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; background: #06080a; border: 1px solid rgba(120, 255, 170, 0.35); color: #cde2d8; font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.04em; border-radius: 3px; cursor: pointer; transition: all 0.15s; } .ds-geek-btn:hover, .ds-geek-btn:focus-visible { background: rgba(95, 255, 156, 0.08); border-color: #5fff9c; color: #5fff9c; outline: none; }"
+    },
+    {
+      "name": "Geek Primary Button",
+      "kind": "button",
+      "refersTo": "geek-button-primary",
+      "description": "Phosphor Green fill; inverts to an outlined glowing button on hover.",
+      "html": "<button class=\"ds-geek-btn-prim\">./contact.sh</button>",
+      "css": ".ds-geek-btn-prim { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; background: #5fff9c; border: 1px solid #5fff9c; color: #06080a; font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; border-radius: 3px; cursor: pointer; transition: all 0.15s; } .ds-geek-btn-prim:hover, .ds-geek-btn-prim:focus-visible { background: #06080a; color: #5fff9c; box-shadow: 0 0 16px rgba(95, 255, 156, 0.4); outline: none; }"
+    },
+    {
+      "name": "Geek Window",
+      "kind": "card",
+      "description": "The geek container: title bar with coral/amber/green dots, dark translucent body.",
+      "html": "<div class=\"ds-geek-win\"><div class=\"ds-geek-win-hd\"><span class=\"ds-dots\"><i></i><i></i><i></i></span><span>~/vicusbass — zsh</span></div><div class=\"ds-geek-win-bd\"><span class=\"ds-geek-glyph\">$</span> whoami<br><span class=\"ds-geek-dim\">SDET &amp; web dev consultant.</span></div></div>",
+      "css": ".ds-geek-win { border: 1px solid rgba(120, 255, 170, 0.35); background: #06080a; border-radius: 4px; box-shadow: 0 0 24px rgba(95, 255, 156, 0.05); font-family: 'JetBrains Mono', ui-monospace, monospace; color: #cde2d8; max-width: 420px; } .ds-geek-win-hd { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid rgba(120, 255, 170, 0.18); font-size: 11px; color: #7dd3a8; letter-spacing: 0.04em; } .ds-dots { display: flex; gap: 5px; } .ds-dots i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; } .ds-dots i:nth-child(1) { background: #ff6b6b; } .ds-dots i:nth-child(2) { background: #ffd93d; } .ds-dots i:nth-child(3) { background: #5fff9c; } .ds-geek-win-bd { padding: 14px 16px; font-size: 12.5px; line-height: 1.5; } .ds-geek-glyph { color: #5fff9c; } .ds-geek-dim { color: #7dd3a8; }"
+    },
+    {
+      "name": "Geek Nav",
+      "kind": "nav",
+      "refersTo": "geek-nav-link-active",
+      "description": "Top bar links; active link is green with a strong green border and tint.",
+      "html": "<nav class=\"ds-geek-nav\"><a href=\"#\">~/home</a><a href=\"#\" data-active=\"true\">~/work</a><a href=\"#\">~/cv</a></nav>",
+      "css": ".ds-geek-nav { display: flex; gap: 4px; background: #06080a; padding: 12px; font-family: 'JetBrains Mono', ui-monospace, monospace; } .ds-geek-nav a { color: #cde2d8; opacity: 0.85; text-decoration: none; padding: 8px 16px; border: 1px solid transparent; border-radius: 3px; font-size: 15px; font-weight: 500; letter-spacing: 0.04em; transition: all 0.12s; } .ds-geek-nav a:hover, .ds-geek-nav a:focus-visible { opacity: 1; color: #5fff9c; text-shadow: 0 0 8px rgba(95, 255, 156, 0.4); outline: none; } .ds-geek-nav a[data-active=\"true\"] { color: #5fff9c; border-color: rgba(120, 255, 170, 0.35); background: rgba(95, 255, 156, 0.06); opacity: 1; }"
+    },
+    {
+      "name": "Refined Primary Button",
+      "kind": "button",
+      "refersTo": "refined-button-primary",
+      "description": "Square Pass Green button; the main refined call to action.",
+      "html": "<a class=\"ds-rf-btn-primary\" href=\"#\">Start a project</a>",
+      "css": ".ds-rf-btn-primary { display: inline-block; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 14px; padding: 12px 22px; border-radius: 0; background: #22c55e; color: #0c0c0d; border: 1px solid #22c55e; text-decoration: none; cursor: pointer; transition: all 0.2s; } .ds-rf-btn-primary:hover { background: #15803d; border-color: #15803d; color: #ffffff; } .ds-rf-btn-primary:focus-visible { outline: 2px solid #0c0c0d; outline-offset: 3px; }"
+    },
+    {
+      "name": "Refined Ghost Button",
+      "kind": "button",
+      "refersTo": "refined-button-ghost",
+      "description": "Hairline-bordered secondary action; turns Pass Green on hover.",
+      "html": "<a class=\"ds-rf-btn-ghost\" href=\"#\">See the work</a>",
+      "css": ".ds-rf-btn-ghost { display: inline-block; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 14px; padding: 12px 22px; border-radius: 0; background: transparent; color: #0c0c0d; border: 1px solid rgba(12, 12, 13, 0.15); text-decoration: none; cursor: pointer; transition: all 0.2s; } .ds-rf-btn-ghost:hover { border-color: #22c55e; color: #15803d; } .ds-rf-btn-ghost:focus-visible { outline: 2px solid #0c0c0d; outline-offset: 3px; }"
+    },
+    {
+      "name": "Refined Input",
+      "kind": "input",
+      "refersTo": "refined-input",
+      "description": "Square hairline field with an uppercase Graphite label; Pass Green border on focus.",
+      "html": "<label class=\"ds-rf-field\"><span class=\"ds-rf-label\">Email</span><input class=\"ds-rf-input\" type=\"email\" placeholder=\"you@company.com\"></label>",
+      "css": ".ds-rf-field { display: flex; flex-direction: column; gap: 7px; font-family: 'Hanken Grotesk', system-ui, sans-serif; max-width: 320px; } .ds-rf-label { font-size: 12px; color: #73757c; letter-spacing: 0.04em; text-transform: uppercase; } .ds-rf-input { font: inherit; font-size: 14px; background: #ffffff; border: 1px solid rgba(12, 12, 13, 0.15); border-radius: 0; padding: 11px 13px; color: #0c0c0d; outline: none; transition: border-color 0.15s; } .ds-rf-input:focus { border-color: #22c55e; }"
+    },
+    {
+      "name": "Refined Nav",
+      "kind": "nav",
+      "refersTo": "refined-monogram",
+      "description": "Monogram tile, name, and dimmed links with a 2px Pass Green underline on the current page.",
+      "html": "<header class=\"ds-rf-head\"><span class=\"ds-rf-mono\">VP</span><nav class=\"ds-rf-nav\"><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">Services</a><a href=\"#\">CV</a><a href=\"#\">Contact</a></nav></header>",
+      "css": ".ds-rf-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 24px; background: #ffffff; border-bottom: 1px solid rgba(12, 12, 13, 0.15); font-family: 'Hanken Grotesk', system-ui, sans-serif; } .ds-rf-mono { width: 38px; height: 38px; background: #22c55e; color: #0c0c0d; display: grid; place-items: center; font-weight: 800; font-size: 16px; letter-spacing: -0.04em; } .ds-rf-nav { display: flex; gap: 30px; } .ds-rf-nav a { padding: 4px 0; font-size: 14px; font-weight: 500; color: #0c0c0d; text-decoration: none; border-bottom: 2px solid transparent; opacity: 0.72; transition: opacity 0.2s, border-color 0.2s; } .ds-rf-nav a:hover { opacity: 1; } .ds-rf-nav a:focus-visible { opacity: 1; outline: 2px solid #0c0c0d; outline-offset: 3px; } .ds-rf-nav a[aria-current=\"page\"] { opacity: 1; border-bottom-color: #22c55e; }"
+    },
+    {
+      "name": "Refined Work Card",
+      "kind": "card",
+      "description": "Square hairline card: screenshot, kind/year, title, blurb; lifts on hover.",
+      "html": "<a class=\"ds-rf-card\" href=\"#\"><div class=\"ds-rf-card-shot\"></div><div class=\"ds-rf-card-body\"><div class=\"ds-rf-card-meta\"><span>Web app</span><span>2026</span></div><div class=\"ds-rf-card-title\">MojoRadar</div><div class=\"ds-rf-card-blurb\">Guitar deal scanner.</div></div></a>",
+      "css": ".ds-rf-card { display: flex; flex-direction: column; max-width: 360px; text-decoration: none; color: #0c0c0d; border: 1px solid rgba(12, 12, 13, 0.15); border-radius: 0; background: #ffffff; overflow: hidden; font-family: 'Hanken Grotesk', system-ui, sans-serif; transition: transform 0.22s ease, box-shadow 0.22s ease; } .ds-rf-card:hover, .ds-rf-card:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 44px -30px rgba(12, 12, 13, 0.45); } .ds-rf-card:focus-visible { outline: 2px solid #0c0c0d; outline-offset: 3px; } .ds-rf-card-shot { aspect-ratio: 16 / 10; background: #f3f3f4; border-bottom: 1px solid rgba(12, 12, 13, 0.15); } .ds-rf-card-body { padding: 18px 20px 20px; } .ds-rf-card-meta { display: flex; justify-content: space-between; font-size: 11px; color: #73757c; text-transform: uppercase; letter-spacing: 0.1em; } .ds-rf-card-title { font-weight: 700; font-size: 22px; letter-spacing: -0.035em; margin-top: 8px; } .ds-rf-card-blurb { font-size: 13.5px; color: #73757c; line-height: 1.55; margin-top: 7px; }"
+    },
+    {
+      "name": "Refined Kicker + Pill",
+      "kind": "chip",
+      "refersTo": "refined-pill",
+      "description": "Uppercase Pass Green kicker above headings; fully rounded hairline pills for tech tags.",
+      "html": "<div class=\"ds-rf-kicker\">SDET · Web Development · Consulting</div><div class=\"ds-rf-pills\"><span class=\"ds-rf-pill\">Astro</span><span class=\"ds-rf-pill\">Playwright</span></div>",
+      "css": ".ds-rf-kicker { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #15803d; font-weight: 700; } .ds-rf-pills { display: flex; gap: 6px; margin-top: 12px; } .ds-rf-pill { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 11px; color: #0c0c0d; background: transparent; border: 1px solid rgba(12, 12, 13, 0.15); padding: 3px 9px; border-radius: 999px; letter-spacing: 0.02em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Two Rooms, One Engineer",
+    "overview": "The site is one body of work shown in two complete visual worlds, and the visitor picks the room at the door. The Phosphor Console (geek theme) is a green-on-black CRT terminal: monospace everything, glowing accents, window title bars, a boot sequence, a working shell. It is playful and a bit showy on purpose. The Swiss Spec Sheet (refined theme) is white paper, a single grotesk at heavy weights, hairline rules, square corners and one green. It is quiet, exact and business-ready. Each room is fully committed to its own world; neither is a reskin of the other.\n\nThe gate (/ with no vp-theme cookie) is the lobby, the only place both worlds are visible at once: a near-black room with two cards, one rendered in each world. Inner pages render in one theme only, chosen by the cookie and resolved server-side so there is never a flash of the wrong room. Content and copy are identical across both rooms; only the presentation changes, so layouts may reorganise information but never add or drop facts.\n\nThe thread tying the rooms together is a single green per theme. In geek it glows like phosphor; in refined it is the green of a passing test. Everything else in each room is neutral.",
+    "keyCharacteristics": [
+      "Two complete worlds, one content model; the gate is the only shared surface.",
+      "Exactly one accent per theme, both green.",
+      "Geek: monospace, dark, glow as depth, window chrome, motion with character (boot, glitch, blinking caret).",
+      "Refined: one grotesk at 800 for headings, white, hairlines, 0px corners, calm motion (fades and small lifts).",
+      "Density differs by room: geek runs small (13.5px body) and packed; refined runs at 16px with generous section spacing."
+    ],
+    "rules": [
+      {
+        "name": "The One Green Rule",
+        "body": "Each theme has exactly one accent and it is green. A second accent hue, a gradient accent, or a tinted section background is a violation.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signals Stay Small Rule",
+        "body": "Amber and coral appear only as dots, single lines of shell output, or error text. If they cover more than a few square pixels of chrome, it is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight Not Size Rule",
+        "body": "Refined headings get their presence from 800 weight and -0.035em tracking, not from extra size or colour. Never colour a refined heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Accent Word Rule",
+        "body": "In geek headings, emphasis is one <em> word in Phosphor Green with glow, upright. Never italic, never more than one per heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Not Shadow Rule",
+        "body": "Geek never uses a dark drop shadow. If something needs to stand out, it glows green or gets a stronger green border.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Flat At Rest Rule",
+        "body": "Refined surfaces have no shadow until hovered. The portrait is the only permanent exception.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep every theme to one green: Phosphor Green (#5fff9c) in geek, Pass Green (#22c55e) in refined, with its text-safe shade #15803d for green text on white.",
+      "Do build refined hierarchy from Hanken Grotesk weight (800 headings, -0.035em) and Graphite secondary text, with 1px Hairline rules between sections.",
+      "Do frame new geek blocks as windows (title bar with three dots) or as 1px-ruled grids, with labels in uppercase mono and numbers in tabular-nums.",
+      "Do use glow, not shadow, for emphasis in geek; keep the refined lift shadow for hover and the portrait only.",
+      "Do render the same content in both rooms; a layout may regroup facts but never add or drop them.",
+      "Do keep every animation inside the global prefers-reduced-motion block in global.css; the boot sequence is skipped separately."
+    ],
+    "donts": [
+      "Don't let refined drift into a SaaS template: no gradients, no rounded cards, no icon-tile feature grids, no second accent colour, no tinted section backgrounds.",
+      "Don't let the themes bleed together: no monospace type, glow, scanlines or dark surfaces in refined; no Hanken Grotesk, flat white surfaces or soft drop shadows in geek. The gate is the only place both appear.",
+      "Don't round refined corners; 0px is the rule, pills (999px) the only exception.",
+      "Don't use Warn Amber or Error Coral outside title-bar dots and error output.",
+      "Don't colour refined headings or set them in italic; the Pass Green kicker above carries the accent."
+    ]
+  }
+}
